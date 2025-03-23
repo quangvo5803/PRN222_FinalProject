@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RestaurantRepositories.UnitOfWork;
+using Repositories.UnitOfWork;
 
 namespace WebApp.Controllers
 {
