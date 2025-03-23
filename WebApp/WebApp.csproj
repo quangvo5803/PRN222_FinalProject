@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\C#\GreenCloset\Utility\Utility.csproj" />
+    <ProjectReference Include="..\..\SP25_PRN222_RESTAURANT\RestaurantBusiness\RestaurantBusiness.csproj" />
+    <ProjectReference Include="..\..\SP25_PRN222_RESTAURANT\RestaurantRepositories\RestaurantRepositories.csproj" />
+  </ItemGroup>
+
+</Project>
