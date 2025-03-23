@@ -1,8 +1,8 @@
+using BusinessObject;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
-using RestaurantBusiness;
-using RestaurantRepositories.UnitOfWork;
+using Repositories.UnitOfWork;
 using WebApp.Utility;
 
 namespace WebApp

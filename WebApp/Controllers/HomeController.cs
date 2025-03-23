@@ -1,13 +1,13 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
+using BusinessObject.Model;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestaurantBusiness.Model;
-using RestaurantRepositories.UnitOfWork;
+using Repositories.UnitOfWork;
 using WebApp.Utility;
 
 namespace WebApp.Controllers;

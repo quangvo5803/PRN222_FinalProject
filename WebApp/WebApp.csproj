@@ -15,9 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\C#\GreenCloset\Utility\Utility.csproj" />
-    <ProjectReference Include="..\..\SP25_PRN222_RESTAURANT\RestaurantBusiness\RestaurantBusiness.csproj" />
-    <ProjectReference Include="..\..\SP25_PRN222_RESTAURANT\RestaurantRepositories\RestaurantRepositories.csproj" />
+    <ProjectReference Include="..\BusinessObject\BusinessObject.csproj" />
+    <ProjectReference Include="..\Repositories\Repositories.csproj" />
+    <ProjectReference Include="..\Ultility\Ultility.csproj" />
   </ItemGroup>
 
 </Project>
