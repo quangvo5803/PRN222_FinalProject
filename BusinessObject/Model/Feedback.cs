@@ -23,6 +23,6 @@ namespace BusinessObject.Model
         [ForeignKey("ProductId")]
         public Product? Product { get; set; }
 
-        public List<ItemImage>? Images { get; set; }
+        public virtual ICollection<ItemImage>? Images { get; set; }
     }
 }

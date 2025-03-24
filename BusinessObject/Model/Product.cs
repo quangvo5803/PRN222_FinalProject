@@ -15,7 +15,6 @@ namespace BusinessObject.Model
         public double Price { get; set; }
         public int CategoryId { get; set; }
         public int? ProductAvatarId { get; set; }
-        public List<ItemImage>? ProductImages { get; set; }
 
         //Foreign key
 
@@ -26,6 +25,7 @@ namespace BusinessObject.Model
         public Category? Category { get; set; }
 
         //Navigation property
+        public virtual ICollection<ItemImage>? ProductImages { get; set; }
         public virtual ICollection<Feedback>? Feedbacks { get; set; }
     }
 }
