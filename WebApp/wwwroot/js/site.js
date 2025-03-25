@@ -1,4 +1,26 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿$(document).ready(function () {
+    new WOW().init();
 
-// Write your JavaScript code.
+    $(".testimonial-carousel").owlCarousel({
+        autoplay: true,
+        smartSpeed: 1000,
+        center: true,
+        margin: 24,
+        dots: true,
+        loop: true,
+        nav: false,
+        responsive: {
+            0: { items: 1 },
+            768: { items: 2 },
+            992: { items: 3 }
+        }
+    });
+    document.getElementById("signUpBtn").addEventListener("click", function () {
+        var email = document.getElementById("emailInput").value.trim();
+        if (email) {
+            window.location.href = "/Home/Register?email=" + encodeURIComponent(email);
+        } else {
+            alert("Vui lòng nhập email!");
+        }
+    });
+});
