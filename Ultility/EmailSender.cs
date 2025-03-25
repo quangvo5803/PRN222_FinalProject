@@ -26,7 +26,7 @@ namespace WebApp.Utility
                 using (var message = new MailMessage())
                 using (var smtpClient = new SmtpClient())
                 {
-                    message.From = new MailAddress(smtpUser, "GreenCloset");
+                    message.From = new MailAddress(smtpUser, "FoodHub");
                     message.To.Add(email);
                     message.Subject = subject;
                     message.IsBodyHtml = true;
