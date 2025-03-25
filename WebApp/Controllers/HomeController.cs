@@ -64,8 +64,9 @@ public class HomeController : Controller
         };
     }
 
-    public IActionResult Register()
+    public IActionResult Register(string? email)
     {
+        ViewBag.Email = email;
         return View();
     }
 
