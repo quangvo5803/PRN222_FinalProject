@@ -1,0 +1,64 @@
+﻿<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
+    <div class="container-fluid">
+        <a class="navbar-brand text-primary ms-3" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-utensils me-3"></i>FoodHub</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Menu">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Service">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Contact</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto d-flex align-items-center me-3">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item me-3">
+                        <a class="d-block" asp-area="" asp-controller="User" asp-action="Profile" title="Thông tin tài khoản">
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                <i class="bi bi-person-fill fs-5 text-dark"></i>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="d-block" onclick="document.getElementById('logoutForm').submit();" style="cursor: pointer;" title="Đăng xuất">
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                <i class="bi bi-box-arrow-right fs-5 text-danger"></i>
+                            </div>
+                        </a>
+                        <form id="logoutForm" method="post" asp-action="Logout" asp-controller="Home" class="d-none">
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item me-3">
+                        <a class="d-block" asp-action="Register" asp-controller="Home" title="Đăng ký">
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                <i class="bi bi-person-plus-fill fs-5 text-dark"></i>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="d-block" asp-action="Login" asp-controller="Home" title="Đăng nhập">
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                <i class="bi bi-box-arrow-in-right fs-5 text-dark"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
