@@ -40,6 +40,5 @@ namespace BusinessObject.Model
     {
         Admin,
         Customer,
-        Lessor,
     }
 }
