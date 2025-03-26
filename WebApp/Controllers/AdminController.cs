@@ -20,14 +20,14 @@ namespace WebApp.Controllers
             return View();
         }
         //Start CRUD Product
-        public async Task<IActionResult> ProductList()
+        public  IActionResult ProductList()
         {
             var products = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductAvatar");
             return View(products);
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateProduct()
+        public  IActionResult CreateProduct()
         {
             ViewBag.Categories = _unitOfWork.Category.GetAll(); //Take all categories to show in dropdown list
             return View();
