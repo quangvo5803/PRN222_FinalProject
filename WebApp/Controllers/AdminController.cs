@@ -9,39 +9,98 @@ namespace WebApp.Controllers
     public class AdminController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AdminController(IUnitOfWork unitOfWork)
+        public AdminController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
         {
             return View();
         }
+
         //Start CRUD Product
-        public  IActionResult ProductList()
+        public IActionResult ProductList()
         {
             var products = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductAvatar");
             return View(products);
         }
 
         [HttpGet]
-        public  IActionResult CreateProduct()
+        public IActionResult CreateProduct()
         {
             ViewBag.Categories = _unitOfWork.Category.GetAll(); //Take all categories to show in dropdown list
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateProduct(Product product)
+        public async Task<IActionResult> CreateProduct(
+            Product product,
+            IFormFile? avatar,
+            List<IFormFile>? gallery
+        )
         {
             if (ModelState.IsValid)
             {
                 _unitOfWork.Product.Add(product);
                 _unitOfWork.Save();
+                string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img/products");
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+                //Add Avatar
+                if (avatar != null)
+                {
+                    string avatarName =
+                        Guid.NewGuid().ToString() + "_" + Path.GetExtension(avatar.FileName);
+                    string avatarPath = Path.Combine(uploadFolder, avatarName);
+
+                    using (var steam = new FileStream(avatarPath, FileMode.Create))
+                    {
+                        await avatar.CopyToAsync(steam);
+                    }
+
+                    //Save to database
+                    var productAvatar = new ItemImage
+                    {
+                        ImagePath = avatarName,
+                        ProductId = product.Id,
+                    };
+                    _unitOfWork.ItemImage.Add(productAvatar);
+                    _unitOfWork.Save();
+                    product.ProductAvatarId = productAvatar.Id;
+                }
+                //Add Gallery
+                if (gallery != null && gallery.Count > 0)
+                {
+                    foreach (var image in gallery)
+                    {
+                        string imageName =
+                            Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+                        string imagePath = Path.Combine(uploadFolder, imageName);
+                        using (var steam = new FileStream(imagePath, FileMode.Create))
+                        {
+                            await image.CopyToAsync(steam);
+                        }
+                        //Save to database
+                        var productImage = new ItemImage
+                        {
+                            ImagePath = imageName,
+                            ProductId = product.Id,
+                        };
+                        _unitOfWork.ItemImage.Add(productImage);
+                    }
+                    _unitOfWork.Save();
+                }
+                TempData["success"] = "Product created successfully";
                 return RedirectToAction("ProductList");
             }
+            TempData["error"] = "Product created unsuccessfully";
             ViewBag.Categories = _unitOfWork.Category.GetAll();
             return View(product);
         }
@@ -49,7 +108,10 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult EditProduct(int id)
         {
-            var product = _unitOfWork.Product.Get(p => p.Id == id, includeProperties: "Category,ProductAvatar");
+            var product = _unitOfWork.Product.Get(
+                p => p.Id == id,
+                includeProperties: "Category,ProductAvatar"
+            );
             if (product == null)
             {
                 return NotFound();
@@ -84,6 +146,7 @@ namespace WebApp.Controllers
             _unitOfWork.Save();
             return RedirectToAction("ProductList");
         }
+
         //End CRUD Product
 
 
@@ -123,6 +186,7 @@ namespace WebApp.Controllers
             var feedbacks = _unitOfWork.Feedback.GetAll(includeProperties: "User,Product");
             return View(feedbacks);
         }
+
         //End CRUD Customer
 
 
@@ -133,13 +197,11 @@ namespace WebApp.Controllers
             return View(categories);
         }
 
-
         [HttpGet]
         public IActionResult CreateCategory()
         {
             return View();
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -164,7 +226,6 @@ namespace WebApp.Controllers
             }
             return View(category);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
