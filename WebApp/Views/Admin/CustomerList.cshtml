@@ -1,0 +1,39 @@
+﻿@model IEnumerable<BusinessObject.Model.User>
+
+@{
+    ViewData["Title"] = "Customer List";
+}
+<div class="admin-margin">
+    <h2>Customer List</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Phone Number</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model)
+            {
+                <tr>
+                    <td>@customer.Id</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.UserName</td>
+                    <td>@customer.PhoneNumber</td>
+                    <td>
+                        <form asp-action="DeleteCustomer" asp-route-id="@customer.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this customer?');">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>
+        <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+    </p>
+</div>

@@ -1,0 +1,24 @@
+﻿@model BusinessObject.Model.Category
+
+@{
+    ViewData["Title"] = "Create Category";
+}
+<div class="admin-margin">
+    <h2>Create New Category</h2>
+
+    <form asp-action="CreateCategory" method="post">
+        <div class="form-group">
+            <label asp-for="Name">Category Name</label>
+            <input asp-for="Name" class="form-control" required />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">Add</button>
+        <a asp-action="CategoryList" class="btn btn-secondary">Back</a>
+    </form>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,44 @@
+﻿@model BusinessObject.Model.User
+
+@{
+    ViewData["Title"] = "Customer Detail";
+}
+<div class="admin-margin">
+    <h2>Customer Detail</h2>
+
+    <div>
+        <dl class="row">
+            <dt class="col-sm-2">ID</dt>
+            <dd class="col-sm-10">@Model.Id</dd>
+
+            <dt class="col-sm-2">Email</dt>
+            <dd class="col-sm-10">@Model.Email</dd>
+
+            <dt class="col-sm-2">Username</dt>
+            <dd class="col-sm-10">@Model.UserName</dd>
+
+            <dt class="col-sm-2">Phone Number</dt>
+            <dd class="col-sm-10">@Model.PhoneNumber</dd>
+
+            <dt class="col-sm-2">Date of Birth</dt>
+            <dd class="col-sm-10">@(Model.DOB.HasValue ? Model.DOB.Value.ToString("dd/MM/yyyy") : "Not specified")</dd>
+
+            <dt class="col-sm-2">Gender</dt>
+            <dd class="col-sm-10">@(Model.Gender.HasValue ? Model.Gender.ToString() : "Not specified")</dd>
+
+            <dt class="col-sm-2">Address</dt>
+            <dd class="col-sm-10">@(Model.Address ?? "Not specified")</dd>
+
+            <dt class="col-sm-2">Email Confirmed</dt>
+            <dd class="col-sm-10">@(Model.IsEmailConfirmed ? "Yes" : "No")</dd>
+
+            <dt class="col-sm-2">Role</dt>
+            <dd class="col-sm-10">@Model.Role</dd>
+        </dl>
+    </div>
+
+    <div>
+        <a asp-action="EditCustomer" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+        <a asp-action="CustomerList" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
