@@ -255,3 +255,7 @@ a{
     padding-right: 0;
     border-right: none;
 }
+
+.nav-pills .nav-item .active {
+    border-bottom: 2px solid var(--bs-primary);
+}
