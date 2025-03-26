@@ -168,19 +168,6 @@ namespace WebApp.Controllers
             return View(customer);
         }
 
-        [HttpPost]
-        public IActionResult DeleteCustomer(Guid id)
-        {
-            var customer = _unitOfWork.User.Get(u => u.Id == id);
-            if (customer == null || customer.Role != UserRole.Customer)
-            {
-                return NotFound();
-            }
-            _unitOfWork.User.Remove(customer);
-            _unitOfWork.Save();
-            return RedirectToAction("CustomerList");
-        }
-
         public IActionResult FeedbackList()
         {
             var feedbacks = _unitOfWork.Feedback.GetAll(includeProperties: "User,Product");
