@@ -50,57 +50,61 @@
             @RenderBody()
         </main>
     </div>
+    @if(roles == "Admin"){
 
-    <footer class="container-fluid bg-dark text-light pt-5 mt-5">
-        <div class="container">
-            <div class="row g-5">
-                <div class="col-lg-4 col-md-6">
-                    <h4 class="section-title ff-secondary text-primary fw-normal mb-4 only-after">Contact</h4>
-                    <p class="mb-2 "><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
-                    <div class="d-flex pt-2">
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-instagram"></i></a>
+    }
+    else{
+        <footer class="container-fluid bg-dark text-light pt-5 mt-5">
+            <div class="container">
+                <div class="row g-5">
+                    <div class="col-lg-4 col-md-6">
+                        <h4 class="section-title ff-secondary text-primary fw-normal mb-4 only-after">Contact</h4>
+                        <p class="mb-2 "><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-instagram"></i></a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4 only-after">Opening</h4>
-                    <h5 class="text-light fw-normal">Monday - Saturday</h5>
-                    <p>09AM - 09PM</p>
-                    <h5 class="text-light fw-normal">Sunday</h5>
-                    <p>10AM - 08PM</p>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4 only-after">Newsletter</h4>
-                    <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
-                    <div class="position-relative">
-                        <input id="emailInput" class="form-control border-primary w-100 py-3 ps-4 pe-5" type="text"
-                               placeholder="Your email">
-                        <a id="signUpBtn" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Sign Up</a>
+                    <div class="col-lg-4 col-md-6">
+                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4 only-after">Opening</h4>
+                        <h5 class="text-light fw-normal">Monday - Saturday</h5>
+                        <p>09AM - 09PM</p>
+                        <h5 class="text-light fw-normal">Sunday</h5>
+                        <p>10AM - 08PM</p>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="copyright">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        &copy; <a class="border-bottom text-primary text-decoration-none" href="#">FoodHub</a>, All Right Reserved.
-                    </div>
-                    <div class="col-md-6 text-center text-md-end mt-3">
-                        <div class="footer-menu">
-                            <a class="text-white me-1" href="">Home</a>
-                            <a class="text-white me-1" href="">Cookies</a>
-                            <a class="text-white me-1" href="">Help</a>
-                            <a class ="text-white me-1" href="">FQAs</a>
+                    <div class="col-lg-4 col-md-6">
+                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4 only-after">Newsletter</h4>
+                        <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
+                        <div class="position-relative">
+                            <input id="emailInput" class="form-control border-primary w-100 py-3 ps-4 pe-5" type="text"
+                                   placeholder="Your email">
+                            <a id="signUpBtn" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Sign Up</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </footer>
+            <div class="container">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            &copy; <a class="border-bottom text-primary text-decoration-none" href="#">FoodHub</a>, All Right Reserved.
+                        </div>
+                        <div class="col-md-6 text-center text-md-end mt-3">
+                            <div class="footer-menu">
+                                <a class="text-white me-1" href="">Home</a>
+                                <a class="text-white me-1" href="">Cookies</a>
+                                <a class="text-white me-1" href="">Help</a>
+                                <a class="text-white me-1" href="">FQAs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
