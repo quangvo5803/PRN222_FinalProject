@@ -15,12 +15,15 @@
             992: { items: 3 }
         }
     });
-    document.getElementById("signUpBtn").addEventListener("click", function () {
-        var email = document.getElementById("emailInput").value.trim();
-        if (email) {
-            window.location.href = "/Home/Register?email=" + encodeURIComponent(email);
-        } else {
-            alert("Vui lòng nhập email!");
-        }
-    });
+    var signUpBtn = document.getElementById("signUpBtn");
+    if (signUpBtn) {
+        signUpBtn.addEventListener("click", function () {
+            var email = document.getElementById("emailInput").value.trim();
+            if (email) {
+                window.location.href = "/Home/Register?email=" + encodeURIComponent(email);
+            } else {
+                alert("Vui lòng nhập email!");
+            }
+        });
+    }
 });
