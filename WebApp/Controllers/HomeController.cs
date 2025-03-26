@@ -435,6 +435,11 @@ public class HomeController : Controller
         return RedirectToAction("Login", "Home");
     }
 
+    public IActionResult ProductDetail()
+    {
+        return View();
+    }
+
     //Support Login
     private bool IsValidPassword(string password)
     {
