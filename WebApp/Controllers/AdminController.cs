@@ -319,10 +319,14 @@ namespace WebApp.Controllers
         //Start CRUD Category
         public IActionResult CategoryList()
         {
-            var categories = _unitOfWork.Category.GetAll();
-            return View(categories);
+            return View();
         }
-
+        [HttpGet]
+        public IActionResult GetAllCategory()
+        {
+            var categories = _unitOfWork.Category.GetAll();
+            return Json(new { data = categories });
+        }
         [HttpGet]
         public IActionResult CreateCategory()
         {
@@ -366,7 +370,7 @@ namespace WebApp.Controllers
             return View(category);
         }
 
-        [HttpPost]
+        [HttpDelete]
         public IActionResult DeleteCategory(int id)
         {
             var category = _unitOfWork.Category.Get(c => c.Id == id);
@@ -376,17 +380,21 @@ namespace WebApp.Controllers
             }
 
             // Kiểm tra xem danh mục có sản phẩm nào không
-            var productsInCategory = _unitOfWork.Product.GetRange(p => p.CategoryId == id);
+            var productsInCategory = _unitOfWork.Product.GetRange(p => p.Id == id);
             if (productsInCategory.Any())
             {
-                TempData["Error"] = "Cannot delete this category because it contains products.";
-                return RedirectToAction("CategoryList");
+                TempData["error"] = "Cannot delete this category because it contains products.";
+                return Json(new { success = false, message = "Error when delete" });
             }
 
             _unitOfWork.Category.Remove(category);
             _unitOfWork.Save();
-            return RedirectToAction("CategoryList");
+            TempData["success"] = "Delete successfully";
+            return Json(new { success = true, message = "Delete Success" });
         }
         //End CRUD Category
+
+
+
     }
 }
