@@ -25,8 +25,14 @@ namespace WebApp.Controllers
         //Start CRUD Product
         public IActionResult ProductList()
         {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetAllProduct()
+        {
             var products = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductAvatar");
-            return View(products);
+            return Json(new { data = products });
         }
 
         [HttpGet]
@@ -110,24 +116,11 @@ namespace WebApp.Controllers
         {
             var product = _unitOfWork.Product.Get(
                 p => p.Id == id,
-                includeProperties: "Category,ProductAvatar"
+                includeProperties: "Category,ProductAvatar,ProductImages"
             );
             if (product == null)
             {
-                return NotFound();
-            }
-            ViewBag.Categories = _unitOfWork.Category.GetAll();
-            return View(product);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult EditProduct(Product product)
-        {
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.Product.Update(product);
-                _unitOfWork.Save();
+                TempData["error"] = "Product not found";
                 return RedirectToAction("ProductList");
             }
             ViewBag.Categories = _unitOfWork.Category.GetAll();
@@ -135,16 +128,162 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProduct(
+            Product product,
+            IFormFile? avatar,
+            List<IFormFile>? gallery
+        )
+        {
+            if (ModelState.IsValid)
+            {
+                //Tracking product
+                var existingProduct = _unitOfWork.Product.Get(
+                    p => p.Id == product.Id,
+                    includeProperties: "ProductAvatar,ProductImages"
+                );
+
+                if (existingProduct == null)
+                {
+                    TempData["error"] = "Error! Not found product";
+                    return RedirectToAction("ProductList");
+                }
+                //Update product
+                existingProduct.Name = product.Name;
+                existingProduct.Description = product.Description;
+                existingProduct.Price = product.Price;
+                existingProduct.CategoryId = product.CategoryId;
+                existingProduct.ProductAvatarId = product.ProductAvatarId;
+
+                //Get image location
+                string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img/products");
+
+                //Delete old avatar  if exist
+                if (avatar != null)
+                {
+                    if (existingProduct.ProductAvatar != null)
+                    {
+                        var oldAvatarPath = Path.Combine(
+                            uploadFolder,
+                            existingProduct.ProductAvatar.ImagePath
+                        );
+                        if (System.IO.File.Exists(oldAvatarPath))
+                        {
+                            System.IO.File.Delete(oldAvatarPath);
+                        }
+                        _unitOfWork.ItemImage.Remove(existingProduct.ProductAvatar);
+                    }
+                    var newAvatarFileName = Guid.NewGuid() + Path.GetExtension(avatar.FileName);
+                    var newAvatarPath = Path.Combine(uploadFolder, newAvatarFileName);
+                    using (var stream = new FileStream(newAvatarPath, FileMode.Create))
+                    {
+                        await avatar.CopyToAsync(stream);
+                    }
+
+                    var newAvatar = new ItemImage
+                    {
+                        ImagePath = newAvatarFileName,
+                        ProductId = product.Id,
+                    };
+                    _unitOfWork.ItemImage.Add(newAvatar);
+                    _unitOfWork.Save();
+                    existingProduct.ProductAvatarId = newAvatar.Id;
+                }
+
+                //Delete old gallery if exist
+
+                if (gallery != null && gallery.Count > 0)
+                {
+                    if (existingProduct.ProductImages != null)
+                    {
+                        foreach (var image in existingProduct.ProductImages)
+                        {
+                            if (image.Id != existingProduct.ProductAvatarId)
+                            {
+                                var oldImagePath = Path.Combine(uploadFolder, image.ImagePath);
+                                if (System.IO.File.Exists(oldImagePath))
+                                {
+                                    System.IO.File.Delete(oldImagePath);
+                                }
+                                _unitOfWork.ItemImage.Remove(image);
+                            }
+                        }
+
+                        List<ItemImage> newGalleryImages = new();
+                        foreach (var image in gallery)
+                        {
+                            var newImageName = Guid.NewGuid() + Path.GetExtension(image.FileName);
+                            var newImagePath = Path.Combine(uploadFolder, newImageName);
+                            using (var stream = new FileStream(newImagePath, FileMode.Create))
+                            {
+                                await image.CopyToAsync(stream);
+                            }
+
+                            newGalleryImages.Add(
+                                new ItemImage { ImagePath = newImageName, ProductId = product.Id }
+                            );
+                        }
+
+                        product.ProductImages = newGalleryImages;
+                        _unitOfWork.ItemImage.AddRange(newGalleryImages);
+                    }
+                }
+
+                _unitOfWork.Save();
+
+                TempData["success"] = "Update product successfully";
+                return RedirectToAction("ProductList");
+            }
+
+            ViewBag.Categories = _unitOfWork.Category.GetAll();
+            return View(product);
+        }
+
+        [HttpDelete]
         public IActionResult DeleteProduct(int id)
         {
-            var product = _unitOfWork.Product.Get(p => p.Id == id);
+            string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img/products");
+
+            var product = _unitOfWork.Product.Get(
+                p => p.Id == id,
+                includeProperties: "ProductImages"
+            );
+
             if (product == null)
             {
-                return NotFound();
+                TempData["error"] = "Error when delete";
+                return Json(new { success = false, message = "Error when delete" });
             }
+            if (product.ProductAvatar != null)
+            {
+                var oldAvatarPath = Path.Combine(uploadFolder, product.ProductAvatar.ImagePath);
+                if (System.IO.File.Exists(oldAvatarPath))
+                {
+                    System.IO.File.Delete(oldAvatarPath);
+                }
+                _unitOfWork.ItemImage.Remove(product.ProductAvatar);
+            }
+            if (product.ProductImages != null)
+            {
+                foreach (var image in product.ProductImages)
+                {
+                    if (image.Id != product.ProductAvatarId)
+                    {
+                        var oldImagePath = Path.Combine(uploadFolder, image.ImagePath);
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                        _unitOfWork.ItemImage.Remove(image);
+                    }
+                }
+            }
+            _unitOfWork.Save();
+
             _unitOfWork.Product.Remove(product);
             _unitOfWork.Save();
-            return RedirectToAction("ProductList");
+            TempData["success"] = "Delete Successfully";
+            return Json(new { success = true, message = "Delete Success" });
         }
 
         //End CRUD Product
