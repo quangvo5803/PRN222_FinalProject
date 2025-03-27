@@ -58,7 +58,7 @@ namespace Repositories.Implement
             string? includeProperties = null
         )
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query = dbSet.AsNoTracking();
             query = query.Where(filter);
             if (!string.IsNullOrEmpty(includeProperties))
             {
@@ -77,7 +77,7 @@ namespace Repositories.Implement
 
         public IEnumerable<T> GetAll(string? includeProperties = null)
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query = dbSet.AsNoTracking();
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (
