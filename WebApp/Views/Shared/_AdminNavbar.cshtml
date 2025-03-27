@@ -51,14 +51,14 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item me-3">
-                                <a class="d-block" asp-area="" asp-controller="User" asp-action="Profile" title="Thông tin tài khoản">
+                                <a class="d-block" asp-area="" asp-controller="Customer" asp-action="Profile" title="Profile">
                                     <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
                                         <i class="bi bi-person-fill fs-5 text-dark"></i>
                                     </div>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="d-block" onclick="document.getElementById('logoutForm').submit();" style="cursor: pointer;" title="Đăng xuất">
+                                <a class="d-block" onclick="document.getElementById('logoutForm').submit();" style="cursor: pointer;" title="Logout">
                                     <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
                                         <i class="bi bi-box-arrow-right fs-5 text-danger"></i>
                                     </div>
@@ -70,14 +70,14 @@
                         else
                         {
                             <li class="nav-item me-3">
-                                <a class="d-block" asp-action="Register" asp-controller="Home" title="Đăng ký">
+                                <a class="d-block" asp-action="Register" asp-controller="Home" title="Register">
                                     <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
                                         <i class="bi bi-person-plus-fill fs-5 text-dark"></i>
                                     </div>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="d-block" asp-action="Login" asp-controller="Home" title="Đăng nhập">
+                                <a class="d-block" asp-action="Login" asp-controller="Home" title="Login">
                                     <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
                                         <i class="bi bi-box-arrow-in-right fs-5 text-dark"></i>
                                     </div>
