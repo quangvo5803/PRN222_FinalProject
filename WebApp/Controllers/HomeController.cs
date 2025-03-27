@@ -5,7 +5,6 @@ using BusinessObject.Model;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.UnitOfWork;
 using WebApp.Utility;
@@ -30,12 +29,14 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        var menu = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductAvatar");
+        return View(menu);
     }
 
-    public IActionResult Privacy()
+    public IActionResult Menu()
     {
-        return View();
+        var menu = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductAvatar");
+        return View(menu);
     }
 
     public IActionResult Login()
@@ -61,6 +62,7 @@ public class HomeController : Controller
             }
         }
         await SignInUser(HttpContext, user);
+        TempData["success"] = "Login successfully";
         return user!.Role switch
         {
             UserRole.Admin => RedirectToAction("Index", "Admin"),
@@ -138,10 +140,10 @@ public class HomeController : Controller
             + $"</tr>"
             + $"</tbody>"
             + $"</table>"
-            + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">Thank you for trusting Vi-Learning</p>"
-            + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">Vi-Learning</p>"
+            + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">Thank you for trusting FoodHub</p>"
+            + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">Foodhub</p>"
             + $"<div style=\"text-align: center; margin-top: 20px;\">"
-            + $"<img src=\"https://images.squarespace-cdn.com/content/v1/6362b1bc8f40907828c799e7/1668306393339-OG3FFQ3CK5MAZ16P6BX2/localgreencloset+case+study++%281%29.jpg\" alt=\"Vi-Learning Logo\" style=\"max-width: 200px; height: auto; border-radius: 8px;\">"
+            + $"<img src=\"https://scontent.fdad3-4.fna.fbcdn.net/v/t39.30808-6/300087127_364723072543497_3908705445968239834_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=3hSjEixh-3IQ7kNvgGRJhL2&_nc_oc=AdlJBnirwOJnnxV1_sBos5SfsMXM7XcUnTkSh5b7NfL6ab5VLFZRtMbdtQ1otkDDTA2UbCf1cDLKJ6ZRjK40SCw7&_nc_zt=23&_nc_ht=scontent.fdad3-4.fna&_nc_gid=GVBLMMWCMlhJg9crhvdHaQ&oh=00_AYGIy8zoiL-H27Kp2bGYl2cHrwPz5Ql_iLbPuDZyBBDt1w&oe=67EAA35A\" alt=\"Vi-Learning Logo\" style=\"max-width: 200px; height: auto; border-radius: 8px;\">"
             + $"</div>"
             + $"</td>"
             + $"</tr>"
@@ -210,17 +212,17 @@ public class HomeController : Controller
                 + $"<td></td>"
                 + $"<td class=\"container\" style=\"margin: 0 auto !important; max-width: 600px; padding: 0; padding-top: 24px; width: 600px;\">"
                 + $"<div class=\"content\" style=\"box-sizing: border-box; display: block; margin: 0 auto; max-width: 600px; padding: 0;\">"
-                + $"<table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"main\" style=\"background: #f0f8f0; border: 1px solid #2e7d32; border-radius: 16px; width: 100%; text-align: center;\">"
+                + $"<table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"main\" style=\"background: #fff4e6; border: 1px solid #ff6b35; border-radius: 16px; width: 100%; text-align: center;\">"
                 + $"<tr>"
                 + $"<td class=\"wrapper\" style=\"box-sizing: border-box; padding: 24px;\">"
-                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #1b5e20;\">Hello!</p>"
-                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #1b5e20;\">Congratulations on successfully registering an account with Green Closet!</p>"
-                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #1b5e20;\">Your default password is: <strong>Abc123@</strong></p>"
-                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #1b5e20;\">Please change your password immediately after logging in to secure your account.</p>"
-                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #1b5e20;\">Thank you for trusting Green Closet</p>"
-                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #1b5e20;\">Green Closet</p>"
+                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #8b4513;\">Hello!</p>"
+                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #8b4513;\">Congratulations on successfully registering an account with FoodHub!</p>"
+                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #8b4513;\">Your default password is: <strong>Abc123@</strong></p>"
+                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #8b4513;\">Please change your password immediately after logging in to secure your account.</p>"
+                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #8b4513;\">Thank you for trusting FoodHub</p>"
+                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #8b4513;\">FoodHub</p>"
                 + $"<div style=\"text-align: center; margin-top: 20px;\">"
-                + $"<img src=\"https://images.squarespace-cdn.com/content/v1/6362b1bc8f40907828c799e7/1668306393339-OG3FFQ3CK5MAZ16P6BX2/localgreencloset+case+study++%281%29.jpg\" alt=\"Green Closet Logo\" style=\"max-width: 200px; height: auto; border-radius: 8px;\">"
+                + $"<img src=\"https://scontent.fdad3-4.fna.fbcdn.net/v/t39.30808-6/300087127_364723072543497_3908705445968239834_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=3hSjEixh-3IQ7kNvgGRJhL2&_nc_oc=AdlJBnirwOJnnxV1_sBos5SfsMXM7XcUnTkSh5b7NfL6ab5VLFZRtMbdtQ1otkDDTA2UbCf1cDLKJ6ZRjK40SCw7&_nc_zt=23&_nc_ht=scontent.fdad3-4.fna&_nc_gid=GVBLMMWCMlhJg9crhvdHaQ&oh=00_AYGIy8zoiL-H27Kp2bGYl2cHrwPz5Ql_iLbPuDZyBBDt1w&oe=67EAA35A\" alt=\"FoodHub Logo\" style=\"max-width: 200px; height: auto; border-radius: 8px;\">"
                 + $"</div>"
                 + $"</td>"
                 + $"</tr>"
@@ -233,7 +235,7 @@ public class HomeController : Controller
             await _emailSender.SendEmailAsync(email, subject, body);
         }
         await SignInUser(HttpContext, user);
-
+        TempData["success"] = "Login successfully";
         return RedirectToAction("Index", "Home");
     }
 
@@ -304,10 +306,10 @@ public class HomeController : Controller
                 + $"</tr>"
                 + $"</tbody>"
                 + $"</table>"
-                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">Thank you for trusting Vi-Learning</p>"
-                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">Vi-Learning</p>"
+                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">Thank you for trusting FoodHub</p>"
+                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">Foodhub</p>"
                 + $"<div style=\"text-align: center; margin-top: 20px;\">"
-                + $"<img src=\"https://images.squarespace-cdn.com/content/v1/6362b1bc8f40907828c799e7/1668306393339-OG3FFQ3CK5MAZ16P6BX2/localgreencloset+case+study++%281%29.jpg\" alt=\"Vi-Learning Logo\" style=\"max-width: 200px; height: auto; border-radius: 8px;\">"
+                + $"<img src=\"https://scontent.fdad3-4.fna.fbcdn.net/v/t39.30808-6/300087127_364723072543497_3908705445968239834_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=3hSjEixh-3IQ7kNvgGRJhL2&_nc_oc=AdlJBnirwOJnnxV1_sBos5SfsMXM7XcUnTkSh5b7NfL6ab5VLFZRtMbdtQ1otkDDTA2UbCf1cDLKJ6ZRjK40SCw7&_nc_zt=23&_nc_ht=scontent.fdad3-4.fna&_nc_gid=GVBLMMWCMlhJg9crhvdHaQ&oh=00_AYGIy8zoiL-H27Kp2bGYl2cHrwPz5Ql_iLbPuDZyBBDt1w&oe=67EAA35A\" alt=\"Vi-Learning Logo\" style=\"max-width: 200px; height: auto; border-radius: 8px;\">"
                 + $"</div>"
                 + $"</td>"
                 + $"</tr>"
@@ -347,7 +349,7 @@ public class HomeController : Controller
                 + $"<table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"main\" style=\"background: #fff3e0; border: 1px solid #ff5722; border-radius: 16px; width: 100%; text-align: center;\">"
                 + $"<tr>"
                 + $"<td class=\"wrapper\" style=\"box-sizing: border-box; padding: 24px;\">"
-                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">Hello,</p>"
+                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">Hello</p>"
                 + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">You have requested to reset your password for your FoodHub account. Click the button below to reset your password.</p>"
                 + $"<table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-primary\" style=\"min-width: 100% !important; width: 100%;\">"
                 + $"<tbody>"
@@ -365,10 +367,9 @@ public class HomeController : Controller
                 + $"</tbody>"
                 + $"</table>"
                 + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">If you did not request a password reset, please ignore this email or contact our support team if you have any concerns.</p>"
-                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">This link will expire in 15 minutes for your security.</p>"
-                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">Green Closet</p>"
+                + $"<p style=\"font-weight: normal; margin: 0; margin-bottom: 16px; color: #bf360c;\">FoodHub</p>"
                 + $"<div style=\"text-align: center; margin-top: 20px;\">"
-                + $"<img src=\"https://images.squarespace-cdn.com/content/v1/6362b1bc8f40907828c799e7/1668306393339-OG3FFQ3CK5MAZ16P6BX2/localgreencloset+case+study++%281%29.jpg\" alt=\"Green Closet Logo\" style=\"max-width: 200px; height: auto; border-radius: 8px;\">"
+                + $"<img src=\"https://scontent.fdad3-4.fna.fbcdn.net/v/t39.30808-6/300087127_364723072543497_3908705445968239834_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=3hSjEixh-3IQ7kNvgGRJhL2&_nc_oc=AdlJBnirwOJnnxV1_sBos5SfsMXM7XcUnTkSh5b7NfL6ab5VLFZRtMbdtQ1otkDDTA2UbCf1cDLKJ6ZRjK40SCw7&_nc_zt=23&_nc_ht=scontent.fdad3-4.fna&_nc_gid=GVBLMMWCMlhJg9crhvdHaQ&oh=00_AYGIy8zoiL-H27Kp2bGYl2cHrwPz5Ql_iLbPuDZyBBDt1w&oe=67EAA35A\" alt=\"Green Closet Logo\" style=\"max-width: 200px; height: auto; border-radius: 8px;\">"
                 + $"</div>"
                 + $"</td>"
                 + $"</tr>"
@@ -433,6 +434,20 @@ public class HomeController : Controller
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Login", "Home");
+    }
+
+    public IActionResult ProductDetail(int id)
+    {
+        var product = _unitOfWork.Product.Get(
+            p => p.Id == id,
+            includeProperties: "Category,ProductAvatar,ProductImages"
+        );
+        if (product == null)
+        {
+            TempData["error"] = "Error! Cannot load product data";
+            return RedirectToAction("Index", "Home");
+        }
+        return View(product);
     }
 
     //Support Login
