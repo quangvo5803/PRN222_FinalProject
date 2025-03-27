@@ -7,7 +7,7 @@ using WebApp.Utility;
 
 namespace WebApp.Controllers
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize(Roles = "Customer,Admin")]
     public class CustomerController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
