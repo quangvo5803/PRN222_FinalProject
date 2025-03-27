@@ -1,5 +1,119 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<!-- Sidebar bên trái -->
+<div class="d-flex">
+    <div class="sidebar bg-light border-right" style="width: 210px; min-height: 100vh;">
+        <div class="accordion p-3" id="sidebarAccordion">
+            <div class="accordion-item">
+                <h5 class="accordion-header" id="headingDashboard" style="margin: 20px">
+                    <a class="" asp-area="" asp-controller="Admin" asp-action="Index"><i class="fa-solid fa-house"></i> Dashboard</a>
+                </h5>
+                <h2 class="accordion-header" id="headingManager">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManager" aria-expanded="true" aria-controls="collapseManager">Manager</button>
+                </h2>
+                <div id="collapseManager" class="accordion-collapse collapse show" aria-labelledby="headingManager" data-bs-parent="#sidebarAccordion">
+                    <div class="accordion-body p-0">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ProductList">Manager Product</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="CategoryList">Manager Category</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="CustomerList">Manager Customer</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="FeedbackList">Manager Feedback</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="OrderList">Manager Order</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar chính -->
+    <div class="flex-grow-1">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
+            <div class="container-fluid">
+                <a class="navbar-brand text-primary ms-3" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-utensils me-3"></i>AdminHub</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <!-- Bỏ các mục Manager khỏi đây -->
+                    </ul>
+                    <ul class="navbar-nav ms-auto d-flex align-items-center me-3">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item me-3">
+                                <a class="d-block" asp-area="" asp-controller="User" asp-action="Profile" title="Thông tin tài khoản">
+                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                        <i class="bi bi-person-fill fs-5 text-dark"></i>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="d-block" onclick="document.getElementById('logoutForm').submit();" style="cursor: pointer;" title="Đăng xuất">
+                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                        <i class="bi bi-box-arrow-right fs-5 text-danger"></i>
+                                    </div>
+                                </a>
+                                <form id="logoutForm" method="post" asp-action="Logout" asp-controller="Home" class="d-none">
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item me-3">
+                                <a class="d-block" asp-action="Register" asp-controller="Home" title="Đăng ký">
+                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                        <i class="bi bi-person-plus-fill fs-5 text-dark"></i>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="d-block" asp-action="Login" asp-controller="Home" title="Đăng nhập">
+                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                        <i class="bi bi-box-arrow-in-right fs-5 text-dark"></i>
+                                    </div>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<!-- CSS tùy chỉnh -->
+<style>
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 100vh;
+        border-right: 1px solid #dee2e6;
+        z-index: 1000;
+    }
+        
+        .sidebar .nav-link {
+            padding: 8px 15px;
+            color: #333;
+        }
+
+            .sidebar .nav-link:hover {
+                background-color: #f8f9fa;
+                color: #007bff;
+            }
+
+    .flex-grow-1 {
+        margin-left: 200px;
+    }
+</style>

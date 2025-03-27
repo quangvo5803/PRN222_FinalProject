@@ -1,0 +1,29 @@
+﻿@model IEnumerable<BusinessObject.Model.Product>
+
+@{
+    ViewData["Title"] = "Product List";
+}
+<div class="admin-margin">
+    <h2>Product List</h2>
+
+    <p>
+        <a asp-action="CreateProduct" class="btn btn-primary">Create New Product</a>
+    </p>
+    <table id="tblData" class="table table-bordered table-striped" width="100%">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    </table>
+    <p>
+        <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+    </p>
+</div>
+@section Scripts {
+    <script src="~/js/Admin/Product.js"></script>
+}
