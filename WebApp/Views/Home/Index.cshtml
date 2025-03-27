@@ -1,4 +1,11 @@
-﻿@{
+﻿@model IEnumerable<Product>
+@{
+    var randomFoodItems = Model.Where(p => p.Category?.Name == "Food").OrderBy(x => Guid.NewGuid()).Take(8).ToList();
+    var randomDrinkItems = Model.Where(p => p.Category?.Name == "Drink").OrderBy(x => Guid.NewGuid()).Take(8).ToList();
+    var randomComboItems = Model.Where(p => p.Category?.Name == "Combo").OrderBy(x => Guid.NewGuid()).Take(8).ToList();
+}
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -76,19 +83,19 @@
                 <div class="row g-3">
                     <div class="col-6 text-start">
                         <img class="img-fluid rounded w-100 wow zoomIn" data-wow-delay="0.1s"
-                             src="img/about-1.jpg">
+                        src="img/about-1.jpg">
                     </div>
                     <div class="col-6 text-start">
                         <img class="img-fluid rounded w-75 wow zoomIn" data-wow-delay="0.3s"
-                             src="img/about-2.jpg" style="margin-top: 25%;">
+                        src="img/about-2.jpg" style="margin-top: 25%;">
                     </div>
                     <div class="col-6 text-end">
                         <img class="img-fluid rounded w-75 wow zoomIn" data-wow-delay="0.5s"
-                             src="img/about-3.jpg">
+                        src="img/about-3.jpg">
                     </div>
                     <div class="col-6 text-end">
                         <img class="img-fluid rounded w-100 wow zoomIn" data-wow-delay="0.7s"
-                             src="img/about-4.jpg">
+                        src="img/about-4.jpg">
                     </div>
                 </div>
             </div>
@@ -145,436 +152,136 @@
             <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
                 <li class="nav-item">
                     <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill"
-                       href="#tab-1">
+                    href="#food">
                         <i class="fa fa-coffee fa-2x text-primary"></i>
                         <div class="ps-3">
-                            <small class="text-body">Popular</small>
-                            <h6 class="mt-n1 mb-0">Breakfast</h6>
+                            <small class="text-body">Best</small>
+                            <h6 class="mt-n1 mb-0">Food</h6>
                         </div>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill"
-                       href="#tab-2">
+                    href="#drink">
                         <i class="fa fa-hamburger fa-2x text-primary"></i>
                         <div class="ps-3">
                             <small class="text-body">Special</small>
-                            <h6 class="mt-n1 mb-0">Launch</h6>
+                            <h6 class="mt-n1 mb-0">Drink</h6>
                         </div>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill"
-                       href="#tab-3">
+                    href="#combo">
                         <i class="fa fa-utensils fa-2x text-primary"></i>
                         <div class="ps-3">
-                            <small class="text-body">Lovely</small>
-                            <h6 class="mt-n1 mb-0">Dinner</h6>
+                            <small class="text-body">Wow</small>
+                            <h6 class="mt-n1 mb-0">Combo</h6>
                         </div>
                     </a>
                 </li>
             </ul>
-            <!--Drink Menu-->
+            <!--Food Menu-->
             <div class="tab-content">
-                <div id="tab-1" class="tab-pane fade show p-0 active">
+                <div id="food" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
                         <div class="col-lg-6">
-                            <a href="">
-                                <div class="d-flex align-items-center">
-                                    <img class="flex-shrink-0 img-fluid rounded" src="img/menu-1.jpg" alt=""
-                                         style="width: 80px;">
-                                    <div class="w-100 d-flex flex-column text-start ps-4">
-                                        <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                            <span>Chicken Burger</span>
-                                            <span class="text-primary">$115</span>
-                                        </h5>
-                                        <small class="fst-italic">
-                                            Ipsum ipsum clita erat amet dolor justo
-                                            diam
-                                        </small>
+                            @foreach(var food in randomFoodItems)
+                            {
+                                <a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@food.Id" >
+                                    <div class="d-flex align-items-center">
+                                        <img class="flex-shrink-0 img-fluid rounded"
+                                             src="@(string.IsNullOrEmpty(food.ProductAvatar?.ImagePath) ?
+                                                "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                                                : $"/img/products/{food.ProductAvatar.ImagePath}")"
+                                             alt="Product Image"
+                                             style="width: 80px;">
+                                        <div class="w-100 d-flex flex-column text-start ps-4">
+                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                                <span>@food.Name</span>
+                                                <span class="text-primary">@food.Price.ToString("C", new CultureInfo("en-US"))</span>
+                                            </h5>
+                                            @if (food.Description != null)
+                                            {
+                                                <small class="fst-italic">
+                                                    @(food.Description.Length > 50 ? food.Description.Substring(0, 50) + "..." : food.Description)
+                                                </small>
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-2.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-3.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-4.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-5.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-6.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-7.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-8.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
+                                </a>
+                            }                          
+                        </div>                     
                     </div>
                 </div>
-                <!--Food Menu-->
-                <div id="tab-2" class="tab-pane fade show p-0">
+                <!--Drink Menu-->
+
+                <div id="drink" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
                         <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-1.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-2.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-3.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-4.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-5.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-6.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-7.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-8.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
+                            @foreach (var drink in randomDrinkItems)
+                            {
+                                <a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@drink.Id">
+                                    <div class="d-flex align-items-center">
+                                        <img class="flex-shrink-0 img-fluid rounded"
+                                             src="@(string.IsNullOrEmpty(drink.ProductAvatar?.ImagePath) ?
+                                                "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                                                : $"/img/products/{drink.ProductAvatar.ImagePath}")"
+                                             alt="Product Image"
+                                             style="width: 80px;">
+                                        <div class="w-100 d-flex flex-column text-start ps-4">
+                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                                <span>@drink.Name</span>
+                                                <span class="text-primary">@drink.Price.ToString("C", new CultureInfo("en-US"))</span>
+                                            </h5>
+                                            @if (drink.Description != null)
+                                            {
+                                                <small class="fst-italic">
+                                                    @(drink.Description.Length > 50 ? drink.Description.Substring(0, 50) + "..." : drink.Description)
+                                                </small>
+                                            }
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        </div>                     
                     </div>
                 </div>
                 <!--Combo Menu-->
-                <div id="tab-3" class="tab-pane fade show p-0">
+
+                <div id="combo" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
                         <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-1.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-2.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-3.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-4.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-5.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-6.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-7.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src="img/menu-8.jpg" alt=""
-                                     style="width: 80px;">
-                                <div class="w-100 d-flex flex-column text-start ps-4">
-                                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>Chicken Burger</span>
-                                        <span class="text-primary">$115</span>
-                                    </h5>
-                                    <small class="fst-italic">
-                                        Ipsum ipsum clita erat amet dolor justo
-                                        diam
-                                    </small>
-                                </div>
-                            </div>
+                            @foreach (var combo in randomDrinkItems)
+                            {
+                                <a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@combo.Id">
+                                    <div class="d-flex align-items-center">
+                                        <img class="flex-shrink-0 img-fluid rounded"
+                                             src="@(string.IsNullOrEmpty(combo.ProductAvatar?.ImagePath) ?
+                                                "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                                                : $"/img/products/{combo.ProductAvatar.ImagePath}")"
+                                             alt="Product Image"
+                                             style="width: 80px;">
+                                        <div class="w-100 d-flex flex-column text-start ps-4">
+                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                                <span>@combo.Name</span>
+                                                <span class="text-primary">@combo.Price.ToString("C", new CultureInfo("en-US"))</span>
+                                            </h5>
+                                            @if (combo.Description != null)
+                                            {
+                                                <small class="fst-italic">
+                                                    @(combo.Description.Length > 50 ? combo.Description.Substring(0, 50) + "..." : combo.Description)
+                                                </small>
+                                            }
+                                        </div>
+                                    </div>
+                                </a>
+                            }
                         </div>
                     </div>
+                </div>
+                <div class="text-center mt-4">
+                    <a class="btn btn-primary show-more" asp-action="Menu" asp-controller="Home" >Show More</a>
                 </div>
             </div>
         </div>
