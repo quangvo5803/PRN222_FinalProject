@@ -261,3 +261,12 @@ a{
 .nav-pills .nav-item .active {
     border-bottom: 2px solid var(--bs-primary);
 }
+.carousel-item img {
+    height: 400px;
+    width: 100%;
+    object-fit: contain;
+    background: white; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

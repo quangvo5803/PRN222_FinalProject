@@ -5,7 +5,6 @@ using BusinessObject.Model;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.UnitOfWork;
 using WebApp.Utility;
@@ -30,12 +29,14 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        var menu = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductAvatar");
+        return View(menu);
     }
 
-    public IActionResult Privacy()
+    public IActionResult Menu()
     {
-        return View();
+        var menu = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductAvatar");
+        return View(menu);
     }
 
     public IActionResult Login()
@@ -435,9 +436,18 @@ public class HomeController : Controller
         return RedirectToAction("Login", "Home");
     }
 
-    public IActionResult ProductDetail()
+    public IActionResult ProductDetail(int id)
     {
-        return View();
+        var product = _unitOfWork.Product.Get(
+            p => p.Id == id,
+            includeProperties: "Category,ProductAvatar,ProductImages"
+        );
+        if (product == null)
+        {
+            TempData["error"] = "Error! Cannot load product data";
+            return RedirectToAction("Index", "Home");
+        }
+        return View(product);
     }
 
     //Support Login
