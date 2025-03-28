@@ -62,6 +62,7 @@
                             <label asp-for="ProductImages" class="form-label fw-bold">Gallery (Additional Images)</label>
                             <input type="file" name="Gallery" class="form-control" accept="image/*" multiple />
                             <small class="text-muted">You can select multiple images</small>
+                            <div id="galleryPreviewContainer" class="d-flex flex-wrap mt-2"></div>
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">
@@ -96,6 +97,26 @@
             if (file) {
                 reader.readAsDataURL(file);
             }
+        });
+        // Preview Gallery Images
+        document.querySelector('input[name="Gallery"]').addEventListener('change', function (e) {
+            const files = e.target.files;
+            const previewContainer = document.getElementById('galleryPreviewContainer');
+            previewContainer.innerHTML = ''; // Clear previous previews
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = function () {
+                    const img = document.createElement('img');
+                    img.src = reader.result;
+                    img.style.maxWidth = '150px';
+                    img.style.margin = '5px';
+                    img.style.borderRadius = '5px';
+                    img.style.border = '1px solid #ddd';
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
         });
     </script>
 }

@@ -7,7 +7,7 @@ using WebApp.Utility;
 
 namespace WebApp.Controllers
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize(Roles = "Customer,Admin")]
     public class CustomerController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -57,7 +57,8 @@ namespace WebApp.Controllers
                 return RedirectToAction("Profile", "Customer");
             }
             var user = _unitOfWork.User.Get(u => u.Email == emailUser);
-            if (user != null && !PasswordHasher.VerifyPassword(oldpassword, user.PasswordHash))
+
+            if (user == null || !PasswordHasher.VerifyPassword(oldpassword, user.PasswordHash))
             {
                 TempData["error"] = "Old password is incorrect";
                 return View();
