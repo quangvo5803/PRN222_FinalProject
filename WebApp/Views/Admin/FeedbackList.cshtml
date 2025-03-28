@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BusinessObject.Model.Feedback>
+﻿
 
 @{
     ViewData["Title"] = "Feedback List";
@@ -6,31 +6,22 @@
 <div class="admin-margin">
     <h2>Feedback List</h2>
 
-    <table class="table">
+    <table id="tblData" class="table table-bordered table-striped" width="100%">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>User</th>
-                <th>Product</th>
+                <th>No</th>
+                <th>User Name</th>
+                <th>Product Name</th>
                 <th>Stars</th>
                 <th>Content</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var feedback in Model)
-            {
-                <tr>
-                    <td>@feedback.Id</td>
-                    <td>@feedback.User?.UserName</td>
-                    <td>@feedback.Product?.Name</td>
-                    <td>@feedback.FeedbackStars</td>
-                    <td>@feedback.FeedbackContent</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <p>
-        <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
-    </p>
+    </table>    
 </div>
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+</p>
+
+@section Scripts{
+    <script src="~/js/Admin/Feedback.js"></script>
+}
