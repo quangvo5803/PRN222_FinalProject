@@ -185,17 +185,17 @@
             <div class="tab-content">
                 <div id="food" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        <div class="col-lg-6">
-                            @foreach(var food in randomFoodItems)
-                            {
+                        @foreach(var food in randomFoodItems)
+                        {
+                            <div class="col-lg-6">
                                 <a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@food.Id" >
                                     <div class="d-flex align-items-center">
                                         <img class="flex-shrink-0 img-fluid rounded"
-                                             src="@(string.IsNullOrEmpty(food.ProductAvatar?.ImagePath) ?
-                                                "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
-                                                : $"/img/products/{food.ProductAvatar.ImagePath}")"
-                                             alt="Product Image"
-                                             style="width: 80px;">
+                                        src="@(string.IsNullOrEmpty(food.ProductAvatar?.ImagePath) ?
+                                                    "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                                                    : $"/img/products/{food.ProductAvatar.ImagePath}")"
+                                        alt="Product Image"
+                                        style="width: 80px;">
                                         <div class="w-100 d-flex flex-column text-start ps-4">
                                             <h5 class="d-flex justify-content-between border-bottom pb-2">
                                                 <span>@food.Name</span>
@@ -210,83 +210,86 @@
                                         </div>
                                     </div>
                                 </a>
-                            }                          
-                        </div>                     
-                    </div>
-                </div>
-                <!--Drink Menu-->
-
-                <div id="drink" class="tab-pane fade show p-0 active">
-                    <div class="row g-4">
-                        <div class="col-lg-6">
-                            @foreach (var drink in randomDrinkItems)
-                            {
-                                <a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@drink.Id">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded"
-                                             src="@(string.IsNullOrEmpty(drink.ProductAvatar?.ImagePath) ?
-                                                "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
-                                                : $"/img/products/{drink.ProductAvatar.ImagePath}")"
-                                             alt="Product Image"
-                                             style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>@drink.Name</span>
-                                                <span class="text-primary">@drink.Price.ToString("C", new CultureInfo("en-US"))</span>
-                                            </h5>
-                                            @if (drink.Description != null)
-                                            {
-                                                <small class="fst-italic">
-                                                    @(drink.Description.Length > 50 ? drink.Description.Substring(0, 50) + "..." : drink.Description)
-                                                </small>
-                                            }
-                                        </div>
-                                    </div>
-                                </a>
-                            }
-                        </div>                     
-                    </div>
-                </div>
-                <!--Combo Menu-->
-
-                <div id="combo" class="tab-pane fade show p-0 active">
-                    <div class="row g-4">
-                        <div class="col-lg-6">
-                            @foreach (var combo in randomDrinkItems)
-                            {
-                                <a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@combo.Id">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded"
-                                             src="@(string.IsNullOrEmpty(combo.ProductAvatar?.ImagePath) ?
-                                                "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
-                                                : $"/img/products/{combo.ProductAvatar.ImagePath}")"
-                                             alt="Product Image"
-                                             style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>@combo.Name</span>
-                                                <span class="text-primary">@combo.Price.ToString("C", new CultureInfo("en-US"))</span>
-                                            </h5>
-                                            @if (combo.Description != null)
-                                            {
-                                                <small class="fst-italic">
-                                                    @(combo.Description.Length > 50 ? combo.Description.Substring(0, 50) + "..." : combo.Description)
-                                                </small>
-                                            }
-                                        </div>
-                                    </div>
-                                </a>
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center mt-4">
-                    <a class="btn btn-primary show-more" asp-action="Menu" asp-controller="Home" >Show More</a>
+                            </div>
+                        }                          
+                    </div>                     
                 </div>
             </div>
+            <!--Drink Menu-->
+
+            <div id="drink" class="tab-pane fade show p-0 active">
+                <div class="row g-4">
+                    @foreach (var drink in randomDrinkItems)
+                    {
+                        <div class="col-lg-6">
+                            <a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@drink.Id">
+                                <div class="d-flex align-items-center">
+                                    <img class="flex-shrink-0 img-fluid rounded"
+                                    src="@(string.IsNullOrEmpty(drink.ProductAvatar?.ImagePath) ?
+                                                        "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                                                        : $"/img/products/{drink.ProductAvatar.ImagePath}")"
+                                    alt="Product Image"
+                                    style="width: 80px;">
+                                    <div class="w-100 d-flex flex-column text-start ps-4">
+                                        <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                            <span>@drink.Name</span>
+                                            <span class="text-primary">@drink.Price.ToString("C", new CultureInfo("en-US"))</span>
+                                        </h5>
+                                        @if (drink.Description != null)
+                                        {
+                                            <small class="fst-italic">
+                                                @(drink.Description.Length > 50 ? drink.Description.Substring(0, 50) + "..." : drink.Description)
+                                            </small>
+                                        }
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+            <!--Combo Menu-->
+
+            <div id="combo" class="tab-pane fade show p-0 active">
+                <div class="row g-4">
+                    @foreach (var combo in randomDrinkItems)
+                    {
+                        <div class="col-lg-6">
+                            <a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@combo.Id">
+                                <div class="d-flex align-items-center">
+                                    <img class="flex-shrink-0 img-fluid rounded"
+                                    src="@(string.IsNullOrEmpty(combo.ProductAvatar?.ImagePath) ?
+                                                        "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                                                        : $"/img/products/{combo.ProductAvatar.ImagePath}")"
+                                    alt="Product Image"
+                                    style="width: 80px;">
+                                    <div class="w-100 d-flex flex-column text-start ps-4">
+                                        <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                            <span>@combo.Name</span>
+                                            <span class="text-primary">@combo.Price.ToString("C", new CultureInfo("en-US"))</span>
+                                        </h5>
+                                        @if (combo.Description != null)
+                                        {
+                                            <small class="fst-italic">
+                                                @(combo.Description.Length > 50 ? combo.Description.Substring(0, 50) + "..." : combo.Description)
+                                            </small>
+                                        }
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+            @if(Model.Count() > 8)
+            {
+                <div class="text-center mt-4">
+                    <a class="btn btn-primary show-more" asp-action="Menu" asp-controller="Home">Show More</a>
+                </div>
+            }
+        </div>
         </div>
     </div>
-</div>
 <!-- Menu End -->
 
 <!-- Feedback Start -->
