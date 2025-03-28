@@ -145,11 +145,63 @@
                             }
                         </div>
                         <div class="tab-pane fade" id="feedback" role="tabpanel" aria-labelledby="feedback">
-                            <p>
-                                Tab content or sample information now <br />
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                                aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                            </p>
+                            <!--Review -->
+                            <div class="review-item border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <div class="review-header">
+                                        <strong>Reviewer Name</strong>
+                                        <div class="rating">
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">2025/03/28</small>
+                                </div>
+                                <p class="mt-2">Review content</p>
+
+                                <!-- Review Images -->
+                                <div class="review-images">
+                                    <a class="venobox" data-gall="gallery02" data-fitview="true" href="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="Review Image 1" />
+                                    </a>
+                                    <a class="venobox" data-gall="gallery02" data-fitview="true" href="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="Review Image 2" />
+                                    </a>
+                                </div>
+                            </div>
+                            <!--Pagenation -->
+                            @* <nav aria-label="Review pagination" class="d-flex justify-content-center">
+                                <ul class="pagination">
+                                    @{
+                                        int currentPage = Model.CurrentPage;
+                                        int totalPages = Model.TotalPages;
+                                    }
+
+                                    @if (currentPage > 1)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" asp-action="ProductDetail" asp-route-page="@(currentPage - 1)">Previous</a>
+                                        </li>
+                                    }
+
+                                    @for (int i = 1; i <= totalPages; i++)
+                                    {
+                                        <li class="page-item @(i == currentPage ? "active" : "")">
+                                            <a class="page-link" asp-action="ProductDetail" asp-route-page="@i">@i</a>
+                                        </li>
+                                    }
+
+                                    @if (currentPage < totalPages)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" asp-action="ProductDetail" asp-route-page="@(currentPage + 1)">Next</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav> *@
                         </div>
                     </div>
                     <!-- Pills content -->
@@ -203,3 +255,101 @@
         </div>
     </div>
 </section>
+<style>
+    .customer-reviews {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .review-item {
+        background-color: white;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+
+        .review-item:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+
+    .review-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .review-header strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+    .rating {
+        display: flex;
+        gap: 2px;
+    }
+
+        .rating .fa-star {
+            color: #ffc107;
+        }
+
+            .rating .fa-star.text-muted {
+                color: #e0e0e0;
+            }
+
+    .overall-rating {
+        background-color: #f1f3f5;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .rating-breakdown .progress {
+        height: 10px;
+        border-radius: 5px;
+    }
+
+    .pagination {
+        margin-top: 20px;
+    }
+
+    .page-item.active .page-link {
+        background-color: #FEA116;
+        border-color: #FEA116;
+    }
+
+    .page-link {
+        color: #FEA116;
+    }
+
+        .page-link:hover {
+            background-color: #FEA116;
+            color: white;
+        }
+    .review-item {
+        padding: 10px;
+    }
+
+    .review-images {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+
+        .review-images img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+            .review-images img:hover {
+                transform: scale(1.05);
+            }
+</style>

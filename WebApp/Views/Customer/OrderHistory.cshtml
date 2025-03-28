@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "Order History";
+}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg rounded-3">
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <!-- Sidebar -->
+                        <div class="col-lg-3 border-end">
+                            <div class="p-4">
+                                <div class="nav flex-column nav-pills">
+                                    <a class="nav-link text-black" asp-action="Profile"><i class="fa fa-user me-2"></i> Information</a>
+                                    <a class="nav-link text-black" asp-action="ChangePassword"><i class="fa fa-lock me-2"></i> Security</a>
+                                    <a class="nav-link active text-white" asp-action="OrderHistory" style="background-color: #FEA116!important;">
+                                        <i class="fa fa-truck-fast me-2"></i> Order History
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Area -->
+                        <div class="col-lg-9">
+                            <div class="p-4">
+                                <div class="tab-class text-center">
+                                    <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
+                                        <li class="nav-item">
+                                            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill"
+                                               href="#pending">
+                                                <i class="fa fa-spinner fa-2x text-primary"></i>
+                                                <div class="ps-3">
+                                                    <h6 class="mt-n1 mb-0">Pending</h6>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill"
+                                               href="#complete">
+                                                <i class="fa fa-check fa-2x text-primary"></i>
+                                                <div class="ps-3">
+                                                    <h6 class="mt-n1 mb-0">Complete</h6>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill"
+                                               href="#cancel">
+                                                <i class="fa fa-xmark fa-2x text-primary"></i>
+                                                <div class="ps-3">
+                                                    <h6 class="mt-n1 mb-0">Cancel</h6>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <!--Pending Menu-->
+                                        <div id="pending" class="tab-pane show p-0 active">
+                                            <div class="row g-4">
+                                                Pending
+                                            </div>
+                                        </div>
+                                        <!--Complete Menu-->
+                                        <div id="complete" class="tab-pane p-0 ">
+                                            <div class="row g-4">
+                                                Complete
+                                            </div>
+                                        </div>
+                                        <!--Cancel Menu-->
+                                        <div id="cancel" class="tab-pane p-0">
+                                            <div class="row g-4">
+                                               Cancel
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                        <!-- End Content Area -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
