@@ -290,12 +290,18 @@ namespace WebApp.Controllers
 
 
         //Start CRUD Customer
+        
         public IActionResult CustomerList()
         {
-            var customers = _unitOfWork.User.GetRange(u => u.Role == UserRole.Customer);
-            return View(customers);
+            return View();
         }
 
+        [HttpGet]
+        public IActionResult GetAllCustomer()
+        {
+                var customers = _unitOfWork.User.GetRange(u => u.Role == UserRole.Customer);
+                return Json(new { data = customers });
+        }
         [HttpGet]
         public IActionResult CustomerDetail(Guid id)
         {
@@ -309,8 +315,22 @@ namespace WebApp.Controllers
 
         public IActionResult FeedbackList()
         {
-            var feedbacks = _unitOfWork.Feedback.GetAll(includeProperties: "User,Product");
-            return View(feedbacks);
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetAllFeedBack()
+        {
+            var feedbacks = _unitOfWork.Feedback.GetAll(includeProperties: "User,Product")
+                .Select(f => new
+                {
+                    user = new { username = f.User.UserName},
+                    product = new { name = f.Product.Name },
+                    feedbackstars = f.FeedbackStars,
+                    feedbackcontent = f.FeedbackContent
+
+                });
+            return Json(new { data = feedbacks });
         }
 
         //End CRUD Customer
@@ -341,9 +361,12 @@ namespace WebApp.Controllers
             {
                 _unitOfWork.Category.Add(category);
                 _unitOfWork.Save();
+                TempData["success"] = "Category created successfully";
                 return RedirectToAction("CategoryList");
             }
-            return View(category);
+            TempData["error"] = "Category created successfully";
+            return RedirectToAction("CategoryList");
+            
         }
 
         [HttpGet]
@@ -365,9 +388,11 @@ namespace WebApp.Controllers
             {
                 _unitOfWork.Category.Update(category);
                 _unitOfWork.Save();
+                TempData["success"] = "Category updated successfully";
                 return RedirectToAction("CategoryList");
             }
-            return View(category);
+            TempData["error"] = "Category created successfully";
+            return RedirectToAction("CategoryList");
         }
 
         [HttpDelete]

@@ -73,5 +73,21 @@ namespace WebApp.Controllers
             TempData["success"] = "Change password successfully";
             return View();
         }
+
+        //Customer Feedback
+
+        [HttpGet]
+        public IActionResult FeedBack(int id)
+        {
+            var product = _unitOfWork.Product.Get(p => p.Id == id, 
+                includeProperties: "User, Product");
+            if (product == null)
+            {
+                TempData["error"] = "Product not found";
+                //tạm thời
+                return RedirectToAction("Index");
+            }
+            return View(product);
+        }
     }
 }
