@@ -281,7 +281,7 @@
                     }
                 </div>
             </div>
-            @if(Model.Count() > 8)
+            @if (randomFoodItems.Count > 8 || randomDrinkItems.Count > 8 || randomComboItems.Count > 8)
             {
                 <div class="text-center mt-4">
                     <a class="btn btn-primary show-more" asp-action="Menu" asp-controller="Home">Show More</a>

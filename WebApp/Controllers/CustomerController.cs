@@ -74,5 +74,10 @@ namespace WebApp.Controllers
             TempData["success"] = "Change password successfully";
             return View();
         }
+
+        public IActionResult OrderHistory()
+        {
+            return View();
+        }
     }
 }
