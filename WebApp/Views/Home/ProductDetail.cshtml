@@ -111,8 +111,12 @@
                     <hr />
                     <a asp-action="" asp-controller="" class="btn btn-success shadow-0"> Buy now </a>
                     <a asp-action="" asp-controller="" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
+                    @if (Model != null)
+                    {
+                        @Html.Partial("_Feedback", Model)
+                    }
                 </div>
-            </main>
+            </main> 
         </div>
     </div>
 </section>
