@@ -31,7 +31,19 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult GetAllProduct()
         {
-            var products = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductAvatar");
+            var products = _unitOfWork
+                .Product.GetAll(includeProperties: "Category,ProductAvatar,Feedbacks")
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Price,
+                    CategoryName = p.Category?.Name,
+                    AvgRating = p.Feedbacks.Any() ? p.Feedbacks.Average(f => f.FeedbackStars) : 0,
+                    FeedbackCount = p.Feedbacks.Count(),
+                })
+                .ToList();
+            ;
             return Json(new { data = products });
         }
 
@@ -387,6 +399,23 @@ namespace WebApp.Controllers
             _unitOfWork.Save();
             return RedirectToAction("CategoryList");
         }
+
         //End CRUD Category
+
+        public IActionResult ViewProductFeedback(int id)
+        {
+            var product = _unitOfWork.Product.Get(p => p.Id == id);
+            if (product == null)
+            {
+                TempData["error"] = "Product not found";
+                return RedirectToAction("ProductList");
+            }
+            ViewBag.Product = product;
+            var feedbackOfProducts = _unitOfWork.Feedback.GetRange(
+                f => f.ProductId == id,
+                includeProperties: "User,Images"
+            );
+            return View(feedbackOfProducts);
+        }
     }
 }
