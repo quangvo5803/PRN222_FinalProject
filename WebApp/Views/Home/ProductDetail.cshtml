@@ -1,7 +1,12 @@
 ﻿@model Product
 @{
     ViewData["Title"] = "Product Detail";
+    var feedbacks = ViewBag.Feedbacks as List<Feedback>;
+    double avgRating = feedbacks.Any()  ? feedbacks.Average(f => f.FeedbackStars) : 0;
+    int totalReviews = feedbacks.Count();
     int thumbnail = 0;
+    int totalPages = (int)Math.Ceiling((double)totalReviews / ViewBag.PageSize);
+    int currentPage = ViewBag.PageNumber;
 }
 <section>
     <div class="container-xxl py-5 bg-dark hero-header mb-5">
@@ -73,15 +78,25 @@
                     </h4>
                     <div class="d-flex flex-row my-3">
                         <div class="text-warning mb-1 me-2">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                            <span class="ms-1">
-                                4.5
-                            </span>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= avgRating)
+                                {
+                                    <i class="fa fa-star"></i>
+                                }
+                                else if (i - 0.5 <= avgRating)
+                                {
+                                    <i class="fa fa-star-half-stroke"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa-regular fa-star"></i>
+                                }
+                            }                      
                         </div>
+                        <span class="ms-1">
+                            @avgRating (@totalReviews reviews)
+                        </span>
                     </div>
 
                     <div class="mb-3">
@@ -112,7 +127,7 @@
                     <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
                         <li class="nav-item">
                             <a class="d-flex align-items-center text-start mx-3 pb-3 active" data-bs-toggle="pill"
-                               href="#description">
+                            href="#description">
                                 <i class="fa fa-hamburger fa-2x text-primary"></i>
                                 <div class="ps-3">
                                     <h6 class="mt-n1 mb-0">Description</h6>
@@ -121,7 +136,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill"
-                               href="#feedback">
+                            href="#feedback">
                                 <i class="fa fa-star fa-2x text-primary"></i>
                                 <div class="ps-3">
                                     <h6 class="mt-n1 mb-0">Feedback</h6>
@@ -146,116 +161,107 @@
                         </div>
                         <div class="tab-pane fade" id="feedback" role="tabpanel" aria-labelledby="feedback">
                             <!--Review -->
-                            <div class="review-item border-bottom pb-3 mb-3">
-                                <div class="d-flex justify-content-between">
-                                    <div class="review-header">
-                                        <strong>Reviewer Name</strong>
-                                        <div class="rating">
-                                            <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star text-warning"></i>
-                                            <i class="fa fa-star text-warning"></i>
-                                        </div>
+                                @if (feedbacks != null && feedbacks.Any())
+                                {
+                                    <div class="review-item border-bottom pb-3 mb-3">
+
+                                        @foreach(var f in feedbacks)
+                                        {
+                                            <div class="d-flex justify-content-between">
+                                                <div class="review-header">
+                                                    <strong>@(f.User?.UserName ?? f.User?.Email)</strong>
+                                                    <div class="rating">
+                                                        @for (int i = 1; i <= 5; i++)
+                                                        {
+                                                            if (i <= f.FeedbackStars)
+                                                            {
+                                                                <i class="fa fa-star"></i>
+                                                            }
+                                                            else if (i - 0.5 <= f.FeedbackStars)
+                                                            {
+                                                                <i class="fa fa-star-half-stroke"></i>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i class="fa-regular fa-star"></i>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">2025/03/28</small>
+                                            </div>
+                                            <p class="mt-2">@f.FeedbackContent</p>
+
+                                            <!-- Review Images -->
+                                            @if (f.Images != null)
+                                            {
+                                                <div class="review-images">
+                                                    @foreach (var image in f.Images)
+                                                    {
+                                                        <a class="venobox" data-gall="gallery01" data-fitview="true" href="/img/products/@image.ImagePath">
+                                                            <img src="/img/products/@image.ImagePath" alt="Review Image" />
+                                                        </a>
+                                                    }
+                                                </div>
+                                            }
+                                        }
                                     </div>
-                                    <small class="text-muted">2025/03/28</small>
-                                </div>
-                                <p class="mt-2">Review content</p>
+                                }
+                                else
+                                {
+                                    <p>
+                                        Not have Review
+                                    </p>
+                                }
 
-                                <!-- Review Images -->
-                                <div class="review-images">
-                                    <a class="venobox" data-gall="gallery02" data-fitview="true" href="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="Review Image 1" />
-                                    </a>
-                                    <a class="venobox" data-gall="gallery02" data-fitview="true" href="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="Review Image 2" />
-                                    </a>
-                                </div>
-                            </div>
                             <!--Pagenation -->
-                            @* <nav aria-label="Review pagination" class="d-flex justify-content-center">
+                            <nav aria-label="Review pagination" class="d-flex justify-content-center">
                                 <ul class="pagination">
-                                    @{
-                                        int currentPage = Model.CurrentPage;
-                                        int totalPages = Model.TotalPages;
-                                    }
-
                                     @if (currentPage > 1)
                                     {
-                                        <li class="page-item">
-                                            <a class="page-link" asp-action="ProductDetail" asp-route-page="@(currentPage - 1)">Previous</a>
+                                        <li>
+                                            <a asp-action="ProductDetail" asp-route-id="@Model.Id" asp-route-pageNumber="@(currentPage - 1)" asp-route-pageSize="ViewBag.PageSize">← Trước</a>
                                         </li>
                                     }
 
                                     @for (int i = 1; i <= totalPages; i++)
                                     {
-                                        <li class="page-item @(i == currentPage ? "active" : "")">
-                                            <a class="page-link" asp-action="ProductDetail" asp-route-page="@i">@i</a>
-                                        </li>
+                                        <a asp-action="ProductDetail" asp-route-id="@Model.Id" asp-route-pageNumber="@i" asp-route-pageSize="ViewBag.PageSize"
+                                        class="@(i == currentPage ? "active" : "")">@i</a>
                                     }
 
                                     @if (currentPage < totalPages)
                                     {
-                                        <li class="page-item">
-                                            <a class="page-link" asp-action="ProductDetail" asp-route-page="@(currentPage + 1)">Next</a>
+                                        <li>
+                                            <a asp-action="ProductDetail" asp-route-id="@Model.Id" asp-route-pageNumber="@(currentPage - 1)" asp-route-pageSize="ViewBag.PageSize">Tiếp →</a>
                                         </li>
                                     }
                                 </ul>
-                            </nav> *@
+                            </nav> 
                         </div>
                     </div>
                     <!-- Pills content -->
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="px-0 border rounded-2 shadow-0">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">You can like</h5>
-                            <div class="col-lg-12 mt-3">
-                                <a href="">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="/img/menu-1.jpg" alt=""
-                                             style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">
-                                                Ipsum ipsum clita erat amet dolor justo
-                                                diam
-                                            </small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-12 mt-3">
-                                <a href="">
-                                    <div class="d-flex align-items-center">
-                                        <img class="flex-shrink-0 img-fluid rounded" src="/img/menu-1.jpg" alt=""
-                                             style="width: 80px;">
-                                        <div class="w-100 d-flex flex-column text-start ps-4">
-                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                                <span>Chicken Burger</span>
-                                                <span class="text-primary">$115</span>
-                                            </h5>
-                                            <small class="fst-italic">
-                                                Ipsum ipsum clita erat amet dolor justo
-                                                diam
-                                            </small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </div>         
         </div>
     </div>
 </section>
 <style>
+    .pagination {
+        margin-top: 20px;
+    }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            text-decoration: none;
+        }
+
+        .pagination .active {
+            background-color: #007bff;
+            color: white;
+        }
     .customer-reviews {
         background-color: #f8f9fa;
         padding: 20px;
