@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@{
+    var isLoggedIn = User.Identity.IsAuthenticated;
+    var accountEmail = isLoggedIn ? User.FindFirst(ClaimTypes.Email)?.Value : null;
+    var roles = isLoggedIn ? User.FindFirst(ClaimTypes.Role)?.Value : null;
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -15,11 +21,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     <!-- Libraries Style Sheet -->
-    <link rel="stylesheet" href="lib/animate/animate.min.css">
+    <link rel="stylesheet" href="~/lib/animate/animate.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     <link rel="stylesheet" href="//cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css" />
-    <link rel="stylesheet" href="lib/owlcarousel/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" />
+    <link rel="stylesheet" href="~/lib/owlcarousel/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" />
+    <link rel="stylesheet" href="~/lib/venobox/venobox.min.css">
+
     <!-- Template Stylesheet -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" />
@@ -27,70 +35,16 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
-            <div class="container-fluid">
-                <a class="navbar-brand text-primary ms-3" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-utensils me-3"></i>FoodHub</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>                      
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Menu">Menu</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Service">Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Contact</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ms-auto d-flex align-items-center me-3">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item me-3">
-                                <a class="d-block" asp-area="" asp-controller="User" asp-action="Profile" title="Thông tin tài khoản">
-                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                                        <i class="bi bi-person-fill fs-5 text-dark"></i>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="d-block" onclick="document.getElementById('logoutForm').submit();" style="cursor: pointer;" title="Đăng xuất">
-                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                                        <i class="bi bi-box-arrow-right fs-5 text-danger"></i>
-                                    </div>
-                                </a>
-                                <form id="logoutForm" method="post" asp-action="Logout" asp-controller="Home" class="d-none">
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item me-3">
-                                <a class="d-block" asp-action="Register" asp-controller="Home" title="Đăng ký">
-                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                                        <i class="bi bi-person-plus-fill fs-5 text-dark"></i>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="d-block" asp-action="Login" asp-controller="Home" title="Đăng nhập">
-                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                                        <i class="bi bi-box-arrow-in-right fs-5 text-dark"></i>
-                                    </div>
-                                </a>
-                            </li>
 
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        @if (roles == "Admin")
+        {
+            <partial name="_AdminNavbar" ; />
+        }
+        else
+        {
+            <partial name="_NormalNavbar" ; />
+
+        }
     </header>
     <div class="container-fluid m-0 p-0">
         <main role="main" class="pb-3">
@@ -98,69 +52,76 @@
             @RenderBody()
         </main>
     </div>
+    @if(roles == "Admin"){
 
-    <footer class="container-fluid bg-dark text-light pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
-        <div class="container">
-            <div class="row g-5">
-                <div class="col-lg-4 col-md-6">
-                    <h4 class="section-title ff-secondary text-primary fw-normal mb-4 only-after">Contact</h4>
-                    <p class="mb-2 "><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
-                    <div class="d-flex pt-2">
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-instagram"></i></a>
+    }
+    else{
+        <footer class="container-fluid bg-dark text-light pt-5 mt-5">
+            <div class="container">
+                <div class="row g-5">
+                    <div class="col-lg-4 col-md-6">
+                        <h4 class="section-title ff-secondary text-primary fw-normal mb-4 only-after">Contact</h4>
+                        <p class="mb-2 "><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-instagram"></i></a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4 only-after">Opening</h4>
-                    <h5 class="text-light fw-normal">Monday - Saturday</h5>
-                    <p>09AM - 09PM</p>
-                    <h5 class="text-light fw-normal">Sunday</h5>
-                    <p>10AM - 08PM</p>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4 only-after">Newsletter</h4>
-                    <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
-                    <div class="position-relative">
-                        <input id="emailInput" class="form-control border-primary w-100 py-3 ps-4 pe-5" type="text"
-                               placeholder="Your email">
-                        <a id="signUpBtn" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Sign Up</a>
+                    <div class="col-lg-4 col-md-6">
+                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4 only-after">Opening</h4>
+                        <h5 class="text-light fw-normal">Monday - Saturday</h5>
+                        <p>09AM - 09PM</p>
+                        <h5 class="text-light fw-normal">Sunday</h5>
+                        <p>10AM - 08PM</p>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="copyright">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        &copy; <a class="border-bottom text-primary text-decoration-none" href="#">FoodHub</a>, All Right Reserved.
-                    </div>
-                    <div class="col-md-6 text-center text-md-end mt-3">
-                        <div class="footer-menu">
-                            <a class="text-white me-1" href="">Home</a>
-                            <a class="text-white me-1" href="">Cookies</a>
-                            <a class="text-white me-1" href="">Help</a>
-                            <a class ="text-white me-1" href="">FQAs</a>
+                    <div class="col-lg-4 col-md-6">
+                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4 only-after">Newsletter</h4>
+                        <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
+                        <div class="position-relative">
+                            <input id="emailInput" class="form-control border-primary w-100 py-3 ps-4 pe-5" type="text"
+                                   placeholder="Your email">
+                            <a id="signUpBtn" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Sign Up</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </footer>
+            <div class="container">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            &copy; <a class="border-bottom text-primary text-decoration-none" href="#">FoodHub</a>, All Right Reserved.
+                        </div>
+                        <div class="col-md-6 text-center text-md-end mt-3">
+                            <div class="footer-menu">
+                                <a class="text-white me-1" href="">Home</a>
+                                <a class="text-white me-1" href="">Cookies</a>
+                                <a class="text-white me-1" href="">Help</a>
+                                <a class="text-white me-1" href="">FQAs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="lib/wow/wow.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/counterup/counterup.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/lib/wow/wow.min.js"></script>
+    <script src="~/lib/easing/easing.min.js"></script>
+    <script src="~/lib/waypoints/waypoints.min.js"></script>
+    <script src="~/lib/counterup/counterup.min.js"></script>
+    <script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="~/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="~/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="~/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="~/lib/venobox/venobox.min.js"></script>
+    <script src="~/lib/venobox/custom.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="//cdn.datatables.net/2.0.7/js/dataTables.min.js" asp-append-version="true"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>

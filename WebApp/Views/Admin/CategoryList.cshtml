@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewData["Title"] = "Category List";
+}
+<div class="admin-margin">
+    <h2>Category List</h2>
+    <p>
+        <a asp-action="CreateCategory" class="btn btn-primary">Create New Category</a>
+    </p>
+
+    <table id="tblData" class="table table-bordered table-striped" width="100%">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+</p>
+
+@section Scripts{
+    <script src="~/js/Admin/Category.js"></script>
+}

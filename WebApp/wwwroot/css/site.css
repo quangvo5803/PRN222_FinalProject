@@ -1,3 +1,13 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.container-fluid {
+    flex: 1;
+}
 html {
   font-size: 14px;
 }
@@ -11,7 +21,9 @@ html {
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
-
+.admin-margin {
+    margin-left: 220px;
+}
 html {
   position: relative;
   min-height: 100%;
@@ -244,4 +256,17 @@ a{
     margin-right: 0;
     padding-right: 0;
     border-right: none;
+}
+
+.nav-pills .nav-item .active {
+    border-bottom: 2px solid var(--bs-primary);
+}
+.carousel-item img {
+    height: 400px;
+    width: 100%;
+    object-fit: contain;
+    background: white; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

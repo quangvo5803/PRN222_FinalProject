@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Customer List";
+}
+<div class="admin-margin">
+    <h2>Customer List</h2>
+
+    <table id="tblData" class="table table-bordered table-striped" width="100%">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Phone Number</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+</p>
+@section Scripts{
+    <script src="~/js/Admin/Customer.js"></script>
+}
