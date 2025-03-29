@@ -113,7 +113,7 @@
                     <a asp-action="" asp-controller="" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
                     @if (Model != null)
                     {
-                        @Html.Partial("_Feedback", Model)
+                        <partial name="_Feedback" model="Model" />
                     }
                 </div>
             </main> 
@@ -192,7 +192,7 @@
                                                         }
                                                     </div>
                                                 </div>
-                                                <small class="text-muted">2025/03/28</small>
+                                            <small class="text-muted">@f.CreatedAt.ToString("yyyy/MM/dd")</small>
                                             </div>
                                             <p class="mt-2">@f.FeedbackContent</p>
 
