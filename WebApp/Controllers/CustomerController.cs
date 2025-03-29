@@ -90,7 +90,7 @@ namespace WebApp.Controllers
             int productId,
             int feedbackStars,
             string feedbackContent,
-            List<IFormFile> Images
+            List<IFormFile> images
         )
         {
             var product = _unitOfWork.Product.Get(p => p.Id == productId);
@@ -125,9 +125,9 @@ namespace WebApp.Controllers
             {
                 Directory.CreateDirectory(uploadFolder);
             }
-            if (Images != null || Images.Count > 0)
+            if (images != null || images.Count > 0)
             {
-                foreach (var steam in Images)
+                foreach (var steam in images)
                 {
                     string uniqueFileName =
                         Guid.NewGuid().ToString() + "_" + Path.GetExtension(steam.FileName);

@@ -1,4 +1,8 @@
-﻿
+﻿.modal-dialog {
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 3.5rem);
+}
 .review-guide {
     background: #fff4e5;
     padding: 10px;
