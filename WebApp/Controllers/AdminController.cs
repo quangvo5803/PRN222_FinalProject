@@ -19,6 +19,9 @@ namespace WebApp.Controllers
 
         public IActionResult Index()
         {
+            var feedbacks = _unitOfWork.Feedback.GetAll();
+            ViewBag.AvgRating = feedbacks.Any() ? feedbacks.Average(f => f.FeedbackStars) : 0;
+            ViewBag.UserCount = _unitOfWork.User.GetAll().ToList().Count;
             return View();
         }
 
@@ -429,5 +432,7 @@ namespace WebApp.Controllers
             );
             return View(feedbackOfProducts);
         }
+
+        //Admin Statistic
     }
 }
