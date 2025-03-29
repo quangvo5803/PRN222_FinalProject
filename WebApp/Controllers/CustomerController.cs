@@ -79,10 +79,19 @@ namespace WebApp.Controllers
             return View();
         }
 
+        public IActionResult OrderHistory()
+        {
+            return View();
+        }
 
         //Customer Feedback
         [HttpPost]
-        public async Task<IActionResult> SubmitFeedBack(int productId, int feedbackStars, string feedbackContent, List<IFormFile> Images)
+        public async Task<IActionResult> SubmitFeedBack(
+            int productId,
+            int feedbackStars,
+            string feedbackContent,
+            List<IFormFile> images
+        )
         {
             var product = _unitOfWork.Product.Get(p => p.Id == productId);
 
@@ -102,10 +111,10 @@ namespace WebApp.Controllers
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var summit = new Feedback
             {
-               ProductId = product.Id,
-               FeedbackContent = feedbackContent,
-               FeedbackStars = feedbackStars,
-               UserId = Guid.Parse(userId),
+                ProductId = product.Id,
+                FeedbackContent = feedbackContent,
+                FeedbackStars = feedbackStars,
+                UserId = Guid.Parse(userId),
             };
             _unitOfWork.Feedback.Add(summit);
             _unitOfWork.Save();
@@ -116,18 +125,18 @@ namespace WebApp.Controllers
             {
                 Directory.CreateDirectory(uploadFolder);
             }
-            if (Images != null || Images.Count > 0)
+            if (images != null || images.Count > 0)
             {
-                foreach (var steam in Images)
+                foreach (var steam in images)
                 {
                     string uniqueFileName =
-                    Guid.NewGuid().ToString() + "_" + Path.GetExtension(steam.FileName);
+                        Guid.NewGuid().ToString() + "_" + Path.GetExtension(steam.FileName);
 
                     var filePath = Path.Combine(uploadFolder, uniqueFileName);
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                            await steam.CopyToAsync(fileStream);
+                        await steam.CopyToAsync(fileStream);
                     }
 
                     var itemImage = new ItemImage
@@ -135,20 +144,18 @@ namespace WebApp.Controllers
                         ImagePath = uniqueFileName,
                         ProductId = productId,
                         FeedbackId = summit.Id,
-
                     };
-                    _unitOfWork.ItemImage.Add(itemImage);                   
+                    _unitOfWork.ItemImage.Add(itemImage);
                 }
                 _unitOfWork.Save();
             }
             else
             {
                 TempData["error"] = "No images uploaded";
-            }  
+            }
             //return Ok("Images count: " + Images?.Count);
             TempData["success"] = "Feedback submitted successfully";
             return RedirectToAction("Menu", "Home");
         }
-
     }
 }

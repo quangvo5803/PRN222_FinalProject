@@ -436,17 +436,27 @@ public class HomeController : Controller
         return RedirectToAction("Login", "Home");
     }
 
-    public IActionResult ProductDetail(int id)
+    public IActionResult ProductDetail(int id, int pageNumber = 1, int pageSize = 5)
     {
         var product = _unitOfWork.Product.Get(
             p => p.Id == id,
             includeProperties: "Category,ProductAvatar,ProductImages"
         );
+        var feedbacks = _unitOfWork.Feedback.GetRange(
+            f => f.ProductId == id,
+            includeProperties: "User,Images"
+        );
+        int totalFeedbacks = feedbacks.Count();
+
+        var feedbackPage = feedbacks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
         if (product == null)
         {
             TempData["error"] = "Error! Cannot load product data";
             return RedirectToAction("Index", "Home");
         }
+        ViewBag.Feedbacks = feedbacks;
+        ViewBag.PageNumber = pageNumber;
+        ViewBag.PageSize = pageSize;
         return View(product);
     }
 
