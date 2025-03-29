@@ -30,7 +30,7 @@
                     <li class="nav-item">
                         <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill"
                            href="#food">
-                            <i class="fa fa-coffee fa-2x text-primary"></i>
+                            <i class="fa fa-hamburger fa-2x text-primary"></i>
                             <div class="ps-3">
                                 <small class="text-body">Best</small>
                                 <h6 class="mt-n1 mb-0">Food</h6>
@@ -40,7 +40,8 @@
                     <li class="nav-item">
                         <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill"
                            href="#drink">
-                            <i class="fa fa-hamburger fa-2x text-primary"></i>
+                        <i class="fa fa-coffee fa-2x text-primary"></i>
+
                             <div class="ps-3">
                                 <small class="text-body">Special</small>
                                 <h6 class="mt-n1 mb-0">Drink</h6>
@@ -58,10 +59,10 @@
                         </a>
                     </li>
                 </ul>
-                <!--Food Menu-->
+                <!-- Food Menu -->
                 <div class="tab-content">
-                    <div id="food" class="tab-pane show p-0 active">
-                        <div class="row g-4">
+                        <div id="food" class="tab-pane fade show active p-0">
+                            <div class="row g-4">
                                 @foreach (var food in randomFoodItems)
                                 {
                                     <div class="col-lg-4">
@@ -78,7 +79,7 @@
                                                         <span>@food.Name</span>
                                                         <span class="text-primary">@food.Price.ToString("C", new CultureInfo("en-US"))</span>
                                                     </h5>
-                                                    @if (food.Description != null)
+                                                    @if (!string.IsNullOrEmpty(food.Description))
                                                     {
                                                         <small class="fst-italic">
                                                             @(food.Description.Length > 50 ? food.Description.Substring(0, 50) + "..." : food.Description)
@@ -89,12 +90,12 @@
                                         </a>
                                     </div>
                                 }
+                            </div>
                         </div>
-                    </div>
-                    <!--Drink Menu-->
 
-                    <div id="drink" class="tab-pane  show p-0 active">
-                        <div class="row g-4">
+                        <!-- Drink Menu -->
+                        <div id="drink" class="tab-pane fade p-0">
+                            <div class="row g-4">
                                 @foreach (var drink in randomDrinkItems)
                                 {
                                     <div class="col-lg-4">
@@ -111,7 +112,7 @@
                                                         <span>@drink.Name</span>
                                                         <span class="text-primary">@drink.Price.ToString("C", new CultureInfo("en-US"))</span>
                                                     </h5>
-                                                    @if (drink.Description != null)
+                                                    @if (!string.IsNullOrEmpty(drink.Description))
                                                     {
                                                         <small class="fst-italic">
                                                             @(drink.Description.Length > 50 ? drink.Description.Substring(0, 50) + "..." : drink.Description)
@@ -122,13 +123,13 @@
                                         </a>
                                     </div>
                                 }
+                            </div>
                         </div>
-                    </div>
-                    <!--Combo Menu-->
 
-                    <div id="combo" class="tab-pane  show p-0 active">
-                        <div class="row g-4">
-                                @foreach (var combo in randomDrinkItems)
+                        <!-- Combo Menu -->
+                        <div id="combo" class="tab-pane fade p-0">
+                            <div class="row g-4">
+                                @foreach (var combo in randomComboItems)
                                 {
                                     <div class="col-lg-4">
                                         <a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@combo.Id">
@@ -144,7 +145,7 @@
                                                         <span>@combo.Name</span>
                                                         <span class="text-primary">@combo.Price.ToString("C", new CultureInfo("en-US"))</span>
                                                     </h5>
-                                                    @if (combo.Description != null)
+                                                    @if (!string.IsNullOrEmpty(combo.Description))
                                                     {
                                                         <small class="fst-italic">
                                                             @(combo.Description.Length > 50 ? combo.Description.Substring(0, 50) + "..." : combo.Description)
@@ -157,7 +158,7 @@
                                 }
                             </div>
                         </div>
-                    </div>
+                    </div>               
                 </div>
             </div>
     <!-- Menu End -->
