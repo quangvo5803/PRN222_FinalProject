@@ -312,27 +312,6 @@ namespace WebApp.Controllers
             }
             return View(customer);
         }
-
-        public IActionResult FeedbackList()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult GetAllFeedBack()
-        {
-            var feedbacks = _unitOfWork.Feedback.GetAll(includeProperties: "User,Product")
-                .Select(f => new
-                {
-                    user = new { username = f.User.UserName},
-                    product = new { name = f.Product.Name },
-                    feedbackstars = f.FeedbackStars,
-                    feedbackcontent = f.FeedbackContent
-
-                });
-            return Json(new { data = feedbacks });
-        }
-
         //End CRUD Customer
 
 

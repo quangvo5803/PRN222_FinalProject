@@ -1,13 +1,13 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
     const stars = document.querySelectorAll(".star");
     const ratingText = document.querySelector(".rating-text");
-
+    const ratingInput = document.getElementById("ratingInput");
     const ratingLabels = {
-        1: "Rất tệ",
-        2: "Tệ",
-        3: "Bình thường",
-        4: "Tốt",
-        5: "Tuyệt vời"
+        1: "Very bad",
+        2: "Poor",
+        3: "Fair",
+        4: "Good",
+        5: "Excellent"
     };
 
     let currentRating = 5; // Mặc định là 5 sao
@@ -20,6 +20,7 @@
             star.classList.toggle("active", value <= rating);
         });
         ratingText.textContent = ratingLabels[rating];
+        ratingInput.value = rating; // Cập nhật giá trị vào input ẩn
     };
 
     stars.forEach(star => {
@@ -30,73 +31,40 @@
 
     setRating(currentRating); // Gọi lần đầu khi trang tải
 });
-//ảnh
-document.addEventListener("DOMContentLoaded", () => {
-    const addImageBtn = document.getElementById("addImageBtn");
-    const imagePreview = document.getElementById("imagePreview");
-    const maxImages = 3;
-    let imageCount = 0;
 
-    const createImageBox = (src) => {
-        const box = document.createElement("div");
-        box.className = "image-box";
+// Upload & preview ảnh
+const imageInput = document.getElementById('imageInput');
+const imagePreview = document.getElementById('imagePreview');
+const addImageBtn = document.getElementById('addImageBtn');
 
-        const img = document.createElement("img");
-        img.src = src;
+addImageBtn.addEventListener('click', () => imageInput.click());
 
-        const removeBtn = document.createElement("button");
-        removeBtn.className = "remove-btn";
-        removeBtn.textContent = "x";
-        removeBtn.onclick = () => {
-            box.remove();
-            imageCount--;
-            updatePlaceholder();
+imageInput.addEventListener('change', () => {
+    imagePreview.innerHTML = '';
+    Array.from(imageInput.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const box = document.createElement('div');
+            box.className = 'image-box';
+            box.innerHTML = `<img src="${e.target.result}" /><button class="remove-btn" onclick="this.parentElement.remove()">×</button>`;
+            imagePreview.appendChild(box);
         };
+        reader.readAsDataURL(file);
+    });
+});
 
-        box.appendChild(img);
-        box.appendChild(removeBtn);
-        return box;
-    };
-
-    const createPlaceholderBox = () => {
-        const box = document.createElement("div");
-        box.className = "image-box placeholder";
-        box.innerHTML = `<span>${imageCount}/${maxImages}</span>`;
-        return box;
-    };
-
-    const updatePlaceholder = () => {
-        // Xoá placeholder cũ
-        const existing = imagePreview.querySelector(".placeholder");
-        if (existing) existing.remove();
-        // Thêm placeholder mới nếu chưa đủ ảnh
-        if (imageCount < maxImages) {
-            imagePreview.appendChild(createPlaceholderBox());
-        }
-    };
-
-    addImageBtn.addEventListener("click", () => {
-        if (imageCount >= maxImages) return alert("Bạn chỉ được thêm tối đa 5 ảnh.");
-
-        // Tạo input file ẩn
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/*";
-        input.onchange = () => {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const imgBox = createImageBox(reader.result);
-                    imagePreview.insertBefore(imgBox, imagePreview.lastChild); // Trước placeholder
-                    imageCount++;
-                    updatePlaceholder();
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-        input.click();
+// Gửi ảnh đến server
+document.getElementById("submitBtn").addEventListener("click", async () => {
+    let formData = new FormData();
+    selectedFiles.forEach((file) => {
+        formData.append("Images", file);
     });
 
-    updatePlaceholder(); // Hiển thị ban đầu
+    const response = await fetch("/Customer/SubmitFeedBack", {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.text();
+    console.log(result);
 });

@@ -365,59 +365,5 @@
 <!-- Feedback End -->
 
 
-<link rel="stylesheet" href="~/css/feedback.css">
 
-<button id="btnFeedback" class="btn btn-outline-primary py-sm-3 px-sm-5" data-bs-toggle="modal" data-bs-target="#feedbackModal">Feedback</button>
-
-<!-- Modal Feedback -->
-<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="feedbackModalLabel">Đánh Giá Sản Phẩm</h5> 
-            </div>
-            <div class="d-flex justify-content-center align-items-center">
-                <div class="p-4 bg-light border rounded">
-                    <div class="review-guide">
-                        <span>⭐ Hãy gửi đến chúng tôi đánh giá của bạn 🤗</span>
-                    </div>
-                    <div class="product-info">
-                        <img src="~/img/about-1.jpg" alt="Sản phẩm" class="product-image">
-                        <div class="product-details">
-                            <p class="product-name">
-                                Motul 7100 10W40 nhớt tổng hợp 100% gốc Ester cho xe số, côn tay cấp
-                                nhớt API:SP
-                            </p>
-                            <p class="product-type">Phân loại hàng: 1L</p>
-                        </div>
-                    </div>
-                    <div class="rating-section">
-                        <span>Chất lượng sản phẩm:</span>
-                        <div class="stars" id="starRating">
-                            <span class="star" data-value="1">☆</span>
-                            <span class="star" data-value="2">☆</span>
-                            <span class="star" data-value="3">☆</span>
-                            <span class="star" data-value="4">☆</span>
-                            <span class="star" data-value="5">☆</span>
-                            <span class="rating-text">Tuyệt vời</span>
-                        </div>
-                    </div>
-                    <textarea class="review-text form-control"
-                              placeholder="Hãy chia sẻ những điều bạn thích về sản phẩm này với những người mua khác nhé."></textarea>
-                    <div class="upload-section mt-3">
-                        <button class="btn btn-outline-danger" id="addImageBtn">📷 Add Image</button>
-                        <div id="imagePreview" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-primary me-2" data-bs-dismiss="modal">Back</button>
-                <button type="button" class="btn btn-secondary">Summit</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="~/js/Customer/Feedback.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
