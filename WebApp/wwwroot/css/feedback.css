@@ -22,8 +22,8 @@
 }
 
 .product-image {
-    width: 50px;
-    height: 50px;
+    width: 110px;
+    height: 110px;
     border-radius: 5px;
     margin-right: 10px;
 }
@@ -34,11 +34,13 @@
 
 .product-name {
     font-weight: bold;
+    font-size:24px;
 }
 
 .product-type {
     color: #777;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: bold;
 }
 
 .rating-section {
@@ -60,7 +62,7 @@
 
 
 .upload-btn {
-    background: #ff5722;
+    background: #fde201;
     color: white;
     padding: 8px;
     border: none;
@@ -132,3 +134,17 @@
     }
 
 
+#addImageBtn {
+    border-color: gold; /* Viền màu vàng */
+    color: #ff8f2c; /* Màu chữ */
+}
+
+    #addImageBtn:hover {
+        background-color: #ff8f2c; /* Màu nền khi hover */
+        color: white; /* Màu chữ khi hover */
+    }
+
+    #addImageBtn:focus, #addImageBtn:active {
+        box-shadow: none !important; /* Loại bỏ viền xanh khi click */
+        border-color: gold !important; /* Giữ viền màu vàng khi click */
+    }

@@ -20,4 +20,5 @@
     <ProjectReference Include="..\Ultility\Ultility.csproj" />
   </ItemGroup>
 
+    <Folder Include="wwwroot\img\feedbacks\" />
 </Project>
