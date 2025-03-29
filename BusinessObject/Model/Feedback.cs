@@ -15,6 +15,7 @@ namespace BusinessObject.Model
         public Guid UserId { get; set; }
 
         public int ProductId { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         //Foreign key
         [ForeignKey("UserId")]
