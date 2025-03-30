@@ -12,18 +12,18 @@
                         <div class="me-3">
                             @if (item.Product?.ProductAvatar != null)
                             {
-                                <img src="@Url.Content(item.Product.ProductAvatar.ImagePath)" alt="@item.Product.Name" style="width: 80px; height: 80px; object-fit: contain;" />
+                                <img src="/img//products/@item.Product.ProductAvatar.ImagePath" alt="@item.Product.Name" style="width: 80px; height: 80px; object-fit: contain;" />
                             }
                             else
                             {
-                                <img src="/img/products/placeholder.jpg" alt="Placeholder" style="width: 80px; height: 80px; object-fit: contain;" />
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="Placeholder" style="width: 80px; height: 80px; object-fit: contain;" />
                             }
                         </div>
                         <div class="flex-grow-1">
                             <h5>@item.Product?.Name</h5>
                             <p class="text-muted mb-1">Quantity: @item.Count</p>
-                            <h6 class="text-primary mb-0">$@(item.Product?.Price * item.Count)</h6>
-                            <small class="text-muted">$@item.Product?.Price / per item</small>
+                            <h6 class="text-primary mb-0">@(((item.Product != null ? item.Product.Price * item.Count : 0).ToString("C", new CultureInfo("vi-VN"))))</h6>
+                            <small class="text-muted">@(item.Product?.Price.ToString("C", new CultureInfo("vi-VN"))) / per item</small>
                         </div>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
             <div class="mt-3">
                 <div class="d-flex justify-content-between mb-3">
                     <strong>Total Price:</strong>
-                    <strong>$@ViewBag.TotalPrice</strong>
+                    <strong>@(ViewBag.TotalPrice.ToString("C", new CultureInfo("vi-VN")))</strong>
                 </div>
             </div>
         </div>
@@ -51,25 +51,73 @@
                     <label class="form-label">Address</label>
                     <textarea class="form-control" name="Address" rows="3" placeholder="Enter your address" required>@(ViewBag.User.Address)</textarea>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Payment Method</label>
-                    <select class="form-select" name="PaymentMethod" required>
-                        <option value="">Select payment method</option>
-                        <option value="VNPay">VNPay</option>
-                        <option value="PayByCash">Pay by Cash</option>
-                    </select>
+                <select class="form-select d-none" name="PaymentMethod" id="paymentMethodSelect" required>
+                    <option value="">Select payment method</option>
+                    <option value="VNPay">VNPay</option>
+                    <option value="PayByCash">Pay by Cash</option>
+                </select>
+                <div class="row g-3 mb-3">
+                    <!-- VNPay Option -->
+                    <div class="col-md-6">
+                        <div class="payment-option border rounded p-3 h-100" data-value="VNPay">
+                            <div class="d-flex align-items-center mb-2">
+                                <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Icon-VNPAY-QR.png" alt="VNPay" height="30">
+                                <div class="small text-muted ms-3">Pay with VNPay</div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cash Option -->
+                    <div class="col-md-6">
+                        <div class="payment-option border rounded p-3 h-100" data-value="PayByCash">
+                            <div class="d-flex align-items-center mb-2">
+                                <img src="https://cdn-icons-png.flaticon.com/512/2489/2489756.png" alt="Cash" height="30">
+                                <div class="small text-muted ms-3">Pay by cash</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-success w-100">Confirm Payment</button>
+                <button type="submit" class="btn btn-success w-100 mt-3">Confirm Payment</button>
             </form>
         </div>
     </div>
 </div>
-
-@section Scripts {
-    @if (TempData["error"] != null)
-    {
-        <script>
-            alert('@TempData["error"]');
-        </script>
+<style>
+    .payment-option {
+        cursor: pointer;
+        transition: all 0.3s;
+        background-color: #f8f9fa;
     }
-}
+
+        .payment-option:hover {
+            border-color: #0d6efd !important;
+        }
+
+        .payment-option.selected {
+            border-color: #0d6efd !important;
+            background-color: #f0f7ff;
+            box-shadow: 0 0 0 1px #0d6efd;
+        }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentOptions = document.querySelectorAll('.payment-option');
+        const select = document.getElementById('paymentMethodSelect');
+
+        // Thiết lập event handlers
+        paymentOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Xóa lớp selected từ tất cả các options
+                paymentOptions.forEach(opt => opt.classList.remove('selected'));
+
+                // Thêm lớp selected vào option được chọn
+                this.classList.add('selected');
+
+                // Cập nhật giá trị của select ẩn
+                select.value = this.getAttribute('data-value');
+            });
+        });
+    });
+</script>
