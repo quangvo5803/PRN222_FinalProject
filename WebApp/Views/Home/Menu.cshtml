@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Product>
+﻿@using System.Globalization
+@model IEnumerable<Product>
 @{
     var randomFoodItems = Model.Where(p => p.Category?.Name == "Food").OrderBy(x => x.Name).ToList();
     var randomDrinkItems = Model.Where(p => p.Category?.Name == "Drink").OrderBy(x => x.Name).ToList();

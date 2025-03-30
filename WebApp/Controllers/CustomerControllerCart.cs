@@ -60,6 +60,9 @@ namespace WebApp.Controllers
                 c => c.Id == cartId,
                 includeProperties: "Product"
             );
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (cartItem == null)
             {
                 return Json(new { success = false, message = "Product does not exist in cart." });
@@ -69,21 +72,16 @@ namespace WebApp.Controllers
             _unitOfWork.Save();
 
             // Tính lại tổng giá
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var cartItems = _unitOfWork
-                .ShoppingCart.GetRange(c => c.UserId.ToString() == userId)
+                .ShoppingCart.GetRange(
+                    c => c.UserId.ToString() == userId,
+                    includeProperties: "Product"
+                )
                 .ToList();
-            double totalPrice = 0;
-            if (cartItems.Count > 0)
-            {
-                foreach (var item in cartItems)
-                {
-                    if (item.Product != null)
-                    {
-                        totalPrice += item.Product.Price * item.Count;
-                    }
-                }
-            }
+
+            double totalPrice = cartItems.Sum(item => item.Product?.Price * item.Count ?? 0);
+
             return Json(
                 new
                 {
@@ -106,76 +104,38 @@ namespace WebApp.Controllers
             if (cartItem == null)
             {
                 return Json(
-                    new { success = false, message = "Sản phẩm không tồn tại trong giỏ hàng." }
+                    new { success = false, message = "The product does not exit in the cart" }
                 );
             }
 
-            // Tính số lượng mới
             int newCount = cartItem.Count + change;
 
-            // Không cho phép số lượng nhỏ hơn 1
-            if (newCount < 1)
+            // Nếu số lượng mới >= 1 thì cập nhật, nếu không thì giữ nguyên
+            if (newCount >= 1)
             {
-                var cartItems = _unitOfWork
-                    .ShoppingCart.GetRange(
-                        c => c.UserId.ToString() == userId,
-                        includeProperties: "Product"
-                    )
-                    .ToList();
-
-                double totalPrice = 0;
-                foreach (var item in cartItems)
-                {
-                    if (item.Product != null)
-                    {
-                        totalPrice += item.Product.Price * item.Count;
-                    }
-                }
-
-                return Json(
-                    new
-                    {
-                        success = false,
-                        message = "The quantity cannot be less than 1.",
-                        newCount = cartItem.Count,
-                        itemTotal = cartItem.Product?.Price * cartItem.Count,
-                        totalPrice,
-                        cartCount = cartItems.Count,
-                        removed = false,
-                    }
-                );
+                cartItem.Count = newCount;
+                _unitOfWork.ShoppingCart.Update(cartItem);
+                _unitOfWork.Save();
             }
 
-            // Cập nhật số lượng
-            cartItem.Count = newCount;
-            _unitOfWork.ShoppingCart.Update(cartItem);
-            _unitOfWork.Save();
-
-            // Tính lại tổng giá sau khi cập nhật
-            var cartItemsUpdated = _unitOfWork
+            // Tính lại tổng giá
+            var cartItems = _unitOfWork
                 .ShoppingCart.GetRange(
                     c => c.UserId.ToString() == userId,
                     includeProperties: "Product"
                 )
                 .ToList();
 
-            double totalPriceUpdated = 0;
-            foreach (var item in cartItemsUpdated)
-            {
-                if (item.Product != null)
-                {
-                    totalPriceUpdated += item.Product.Price * item.Count;
-                }
-            }
+            double totalPrice = cartItems.Sum(item => item.Product?.Price * item.Count ?? 0);
 
             return Json(
                 new
                 {
                     success = true,
                     newCount = cartItem.Count,
-                    itemTotal = cartItem.Product?.Price * cartItem.Count,
-                    totalPrice = totalPriceUpdated,
-                    cartCount = cartItemsUpdated.Count,
+                    itemTotal = cartItem.Product?.Price * cartItem.Count ?? 0,
+                    totalPrice = totalPrice,
+                    cartCount = cartItems.Count,
                     removed = false,
                 }
             );

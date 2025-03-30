@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Order List";
+}
+<div class="admin-margin">
+    <h2 class="mb-4">Manage Orders</h2>
+    <table class="table table-striped table-hover" id="orderTable" width="100%">
+        <thead class="table-dark">
+            <tr>
+                <th>No</th>
+                <th>Customer</th>
+                <th>Total Price</th>
+                <th>Order Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <p>
+        <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+    </p>
+</div>
+
+@section Scripts {
+    <script src="/js/Admin/Order.js"></script>
+}
