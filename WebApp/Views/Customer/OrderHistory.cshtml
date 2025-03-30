@@ -1,4 +1,10 @@
-﻿@{
+﻿@model IEnumerable<Order>
+@{
+    var pendingOrder = Model.Where(o => o.Status == OrderStatus.Pending).OrderBy(x => x.OrderDate).ToList();
+    var completeOrder = Model.Where(o => o.Status == OrderStatus.Completed).OrderBy(x => x.OrderDate).ToList();
+    var cancelOrder = Model.Where(o => o.Status == OrderStatus.Cancelled).OrderBy(x => x.OrderDate).ToList();
+}
+@{
     ViewData["Title"] = "Order History";
 }
 <div class="container py-5">
@@ -27,7 +33,7 @@
                                     <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
                                         <li class="nav-item">
                                             <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill"
-                                               href="#pending">
+                                            href="#pending">
                                                 <i class="fa fa-spinner fa-2x text-primary"></i>
                                                 <div class="ps-3">
                                                     <h6 class="mt-n1 mb-0">Pending</h6>
@@ -36,7 +42,7 @@
                                         </li>
                                         <li class="nav-item">
                                             <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill"
-                                               href="#complete">
+                                            href="#complete">
                                                 <i class="fa fa-check fa-2x text-primary"></i>
                                                 <div class="ps-3">
                                                     <h6 class="mt-n1 mb-0">Complete</h6>
@@ -45,10 +51,10 @@
                                         </li>
                                         <li class="nav-item">
                                             <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill"
-                                               href="#cancel">
+                                            href="#cancel">
                                                 <i class="fa fa-xmark fa-2x text-primary"></i>
                                                 <div class="ps-3">
-                                                    <h6 class="mt-n1 mb-0">Cancel</h6>
+                                                    <h6 class="mt-n1 mb-0">Cancelled</h6>
                                                 </div>
                                             </a>
                                         </li>
@@ -57,19 +63,183 @@
                                         <!--Pending Menu-->
                                         <div id="pending" class="tab-pane show p-0 active">
                                             <div class="row g-4">
-                                                Pending
+                                                @if (pendingOrder.Any())
+                                                {
+                                                    @foreach (var order in pendingOrder)
+                                                    {
+                                                        <div class="col-12 mb-4">
+                                                            <div class="card border shadow-sm">
+                                                                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                                                    <div>
+                                                                        <strong>Order #@order.Id</strong>
+                                                                        <span class="ms-3">@order.OrderDate.ToString("dd/MM/yyyy")</span>
+                                                                    </div>
+                                                                    <span class="badge bg-warning text-white">Pending</span>
+                                                                </div>
+                                                                <div class="card-body p-0">
+                                                                    @foreach (var item in order.OrderDetails)
+                                                                    {
+                                                                        <div class="row m-0 p-3 border-bottom d-flex align-items-center gap-3 flex-wrap">
+                                                                            <div class="col-auto">
+                                                                                @if (item.Product != null && item.Product.ProductAvatar != null)
+                                                                                {
+                                                                                    <img src="/img/products/@item.Product.ProductAvatar.ImagePath" alt="@item.Product.Name" class="img-fluid" style="max-width: 80px;">
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="@item.Product.Name" class="img-fluid" style="max-width: 80px;">
+                                                                                }
+                                                                            </div>
+                                                                            <div class="col d-flex align-items-center justify-content-between flex-wrap">
+                                                                                <h6 class="mb-1">Name: @item.Product.Name</h6>
+                                                                                <p class="mb-0">Category: @item.Product.Category?.Name</p>
+                                                                                <p class="mb-0">Quantity: @item.Quantity</p>
+                                                                                <p class="text-dark fw-bold mb-0">@(item.Product.Price.ToString("C", new CultureInfo("vi-VN")))</p>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    }
+                                                                </div>
+                                                                <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                                                    <span>Total: <strong class="text-danger">@(order.TotalPrice.ToString("C", new CultureInfo("vi-VN")))</strong></span>
+                                                                    <div>
+                                                                        <a asp-action="CancelOrder" asp-route-id="@order.Id" class="btn btn-outline-danger btn-sm ms-2"
+                                                                        onclick="return confirm('Are you sure you want to cancel this order?')">Cancel Order</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="empty-order-container text-center py-5">
+                                                        <div class="empty-order-image mb-3">
+                                                            <img src="https://static.vecteezy.com/system/resources/previews/014/814/239/non_2x/no-order-a-flat-rounded-icon-is-up-for-premium-use-vector.jpg" alt="Không có đơn hàng" width="120">
+                                                        </div>
+                                                        <h5 class="text-secondary">Chưa có đơn hàng</h5>
+                                                    </div>
+                                                }
                                             </div>
                                         </div>
                                         <!--Complete Menu-->
                                         <div id="complete" class="tab-pane p-0 ">
                                             <div class="row g-4">
-                                                Complete
+                                                @if (completeOrder.Any())
+                                                {
+                                                    @foreach (var order in completeOrder)
+                                                    {
+                                                        <div class="col-12 mb-4">
+                                                            <div class="card border shadow-sm">
+                                                                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                                                    <div>
+                                                                        <strong>Order #@order.Id</strong>
+                                                                        <span class="ms-3">@order.OrderDate.ToString("dd/MM/yyyy")</span>
+                                                                    </div>
+                                                                    <span class="badge bg-success text-white">Complete</span>
+                                                                </div>
+                                                                <div class="card-body p-0">
+                                                                    @foreach (var item in order.OrderDetails)
+                                                                    {
+                                                                        <div class="row m-0 p-3 border-bottom d-flex align-items-center">
+                                                                            <div class="col-auto">
+                                                                                @if (item.Product != null && item.Product.ProductAvatar != null)
+                                                                                {
+                                                                                    <img src="/img/products/@item.Product.ProductAvatar.ImagePath" alt="@item.Product.Name" class="img-fluid" style="max-width: 80px;">
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="@item.Product.Name" class="img-fluid" style="max-width: 80px;">
+                                                                                }
+                                                                            </div>
+                                                                            <div class="col d-flex align-items-center justify-content-between">
+                                                                                    <h6 class="mb-1">Name: @item.Product.Name</h6>
+                                                                                    <p class="mb-0">Category: @item.Product.Category?.Name</p>
+                                                                                    <p class="mb-0">Quantity: @item.Quantity</p>
+        
+                                                                                <p class="text-dark fw-bold mb-0">@(item.Product.Price.ToString("C", new CultureInfo("vi-VN")))</p>
+                                                                            </div>
+                                                                            <div class="col-auto">
+                                                                                <partial name="_Feedback" model="@item.Product" />
+                                                                            </div>
+                                                                        </div>
+
+                                                                    }
+                                                                </div>
+                                                                <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                                                    <span>Total: <strong class="text-danger">@(order.TotalPrice.ToString("C", new CultureInfo("vi-VN")))</strong></span>                                        
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="empty-order-container text-center py-5">
+                                                        <div class="empty-order-image mb-3">
+                                                            <img src="https://static.vecteezy.com/system/resources/previews/014/814/239/non_2x/no-order-a-flat-rounded-icon-is-up-for-premium-use-vector.jpg" alt="Không có đơn hàng" width="120">
+                                                        </div>
+                                                        <h5 class="text-secondary">Chưa có đơn hàng</h5>
+                                                    </div>
+                                                }
                                             </div>
                                         </div>
                                         <!--Cancel Menu-->
                                         <div id="cancel" class="tab-pane p-0">
                                             <div class="row g-4">
-                                               Cancel
+                                                @if (cancelOrder.Any())
+                                                {
+                                                    @foreach (var order in cancelOrder)
+                                                    {
+                                                        <div class="col-12 mb-4">
+                                                            <div class="card border shadow-sm">
+                                                                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                                                    <div>
+                                                                        <strong>Order #@order.Id</strong>
+                                                                        <span class="ms-3">@order.OrderDate.ToString("dd/MM/yyyy")</span>
+                                                                    </div>
+                                                                    <span class="badge bg-danger text-white">Cancelled</span>
+                                                                </div>
+                                                                <div class="card-body p-0">
+                                                                    @foreach (var item in order.OrderDetails)
+                                                                    {
+                                                                        <div class="row m-0 p-3 border-bottom d-flex align-items-center gap-3 flex-wrap">
+                                                                            <div class="col-auto">
+                                                                                @if (item.Product != null && item.Product.ProductAvatar != null)
+                                                                                {
+                                                                                    <img src="/img/products/@item.Product.ProductAvatar.ImagePath" alt="@item.Product.Name" class="img-fluid" style="max-width: 80px;">
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="@item.Product.Name" class="img-fluid" style="max-width: 80px;">
+                                                                                }
+                                                                            </div>
+                                                                            <div class="col d-flex align-items-center justify-content-between flex-wrap">
+                                                                                <h6 class="mb-1">Name: @item.Product.Name</h6>
+                                                                                <p class="mb-0">Category: @item.Product.Category?.Name</p>
+                                                                                <p class="mb-0">Quantity: @item.Quantity</p>
+                                                                                <p class="text-dark fw-bold mb-0">@(item.Product.Price.ToString("C", new CultureInfo("vi-VN")))</p>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    }
+                                                                </div>
+                                                                <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                                                    <span>Total: <strong class="text-danger">@(order.TotalPrice.ToString("C", new CultureInfo("vi-VN")))</strong></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="empty-order-container text-center py-5">
+                                                        <div class="empty-order-image mb-3">
+                                                            <img src="https://static.vecteezy.com/system/resources/previews/014/814/239/non_2x/no-order-a-flat-rounded-icon-is-up-for-premium-use-vector.jpg" alt="Không có đơn hàng" width="120">
+                                                        </div>
+                                                        <h5 class="text-secondary">Chưa có đơn hàng</h5>
+                                                    </div>
+                                                }
                                             </div>
                                         </div>
                                     </div>
