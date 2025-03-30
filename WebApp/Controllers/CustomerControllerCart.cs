@@ -72,7 +72,7 @@ namespace WebApp.Controllers
             _unitOfWork.Save();
 
             // Tính lại tổng giá
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var cartItems = _unitOfWork
                 .ShoppingCart.GetRange(
                     c => c.UserId.ToString() == userId,
@@ -104,40 +104,21 @@ namespace WebApp.Controllers
             if (cartItem == null)
             {
                 return Json(
-                    new { success = false, message = "The product does not exist in the cart." }
+                    new { success = false, message = "The product does not exit in the cart" }
                 );
             }
 
-            // Tính số lượng mới
             int newCount = cartItem.Count + change;
+
+            // Nếu số lượng mới >= 1 thì cập nhật, nếu không thì giữ nguyên
             if (newCount >= 1)
-                {
-                    if (item.Product != null)
-                    {
-                        totalPrice += item.Product.Price * item.Count;
-                    }
-                }
-
-                return Json(
-                    new
-                    {
-                        success = false,
-                        message = "The quantity cannot be less than 1.",
-                        newCount = cartItem.Count,
-                        itemTotal = cartItem.Product?.Price * cartItem.Count,
-                        totalPrice,
-                        cartCount = cartItems.Count,
-                        removed = false,
-                    }
-                );
+            {
+                cartItem.Count = newCount;
+                _unitOfWork.ShoppingCart.Update(cartItem);
+                _unitOfWork.Save();
             }
 
-            // Cập nhật số lượng
-            cartItem.Count = newCount;
-            _unitOfWork.ShoppingCart.Update(cartItem);
-            _unitOfWork.Save();
-            }
-
+            // Tính lại tổng giá
             var cartItems = _unitOfWork
                 .ShoppingCart.GetRange(
                     c => c.UserId.ToString() == userId,
@@ -155,6 +136,7 @@ namespace WebApp.Controllers
                     itemTotal = cartItem.Product?.Price * cartItem.Count ?? 0,
                     totalPrice = totalPrice,
                     cartCount = cartItems.Count,
+                    removed = false,
                 }
             );
         }

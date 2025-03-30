@@ -58,7 +58,7 @@ function loadDataTable() {
                                 <a onClick="CancelOrder(${row.id})" class="btn btn-danger flex-grow-1 mx-1">Cancel</a>
                             </div>`;
                     } else {
-                        return '<span class="text-muted">Processed</span>';
+                        return '<span class="text-muted" style="display: block; text-align: center;">Processed</span>';
                     }
                 }
             }
