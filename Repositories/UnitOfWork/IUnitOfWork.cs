@@ -9,6 +9,9 @@ namespace Repositories.UnitOfWork
         IProductRepository Product { get; }
         IItemImageRepository ItemImage { get; }
         IFeedbackRepository Feedback { get; }
+        IShoppingCartRepository ShoppingCart { get; }
+        IOrderDetailRepository OrderDetail { get; }
+        IOrderRepository Order { get; }
         void Save();
     }
 }
