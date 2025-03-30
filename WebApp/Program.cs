@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
 using Repositories.UnitOfWork;
+using WebApp.Services;
+using WebApp.Services.Interface;
 using WebApp.Utility;
 
 namespace WebApp
@@ -20,9 +22,9 @@ namespace WebApp
                 .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "/User/Login";
-                    options.LogoutPath = "/User/Logout";
-                    options.AccessDeniedPath = "/User/AccessDenied";
+                    options.LoginPath = "/Home/Login";
+                    options.LogoutPath = "/Home/Logout";
+                    options.AccessDeniedPath = "/Home/AccessDenied";
                 })
                 //Login with Google
                 .AddGoogle(
@@ -44,6 +46,7 @@ namespace WebApp
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddSingleton<EmailSender>();
+            builder.Services.AddSingleton<IVnPayService, VNPayService>();
 
             var app = builder.Build();
 
