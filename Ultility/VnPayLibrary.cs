@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Net;
-using System.Net.Http;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
@@ -69,11 +68,6 @@ namespace Ultility
         {
             var rspRaw = GetResponseData();
             var myChecksum = Utils.HmacSHA512(secretKey, rspRaw);
-
-            //Check error
-            //Console.WriteLine($"rspRaw: {rspRaw}");
-            //Console.WriteLine($"myChecksum: {myChecksum}");
-            //Console.WriteLine($"inputHash: {inputHash}");
             return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
         }
 
@@ -151,7 +145,7 @@ namespace Ultility
             }
             catch (Exception ex)
             {
-                return "Invalid IP: " + ex.Message;
+                return "Invalid IP:" + ex.Message;
             }
 
             return "127.0.0.1";
@@ -171,26 +165,5 @@ namespace Ultility
             var vnpCompare = CompareInfo.GetCompareInfo("en-US");
             return vnpCompare.Compare(x, y, CompareOptions.Ordinal);
         }
-    }
-
-    public class VnPaymentRequestModel
-    {
-        public int OrderId { get; set; }
-        public string FullName { get; set; }
-        public string Description { get; set; }
-        public double Amount { get; set; }
-        public DateTime CreateDate { get; set; }
-    }
-
-    public class VnPaymentResponseModel
-    {
-        public bool Success { get; set; }
-        public string PaymentMethod { get; set; }
-        public string OrderDescription { get; set; }
-        public string OrderId { get; set; }
-        public string PaymentId { get; set; }
-        public string TransactionId { get; set; }
-        public string Token { get; set; }
-        public string VnPayResponseCode { get; set; }
     }
 }
