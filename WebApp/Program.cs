@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
 using Repositories.UnitOfWork;
+using WebApp.Hubs;
 using WebApp.Services;
 using WebApp.Services.Interface;
 using WebApp.Utility;
@@ -18,6 +19,7 @@ namespace WebApp
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             // Add services to the container.
+            builder.Services.AddSignalR();
             builder
                 .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -64,7 +66,7 @@ namespace WebApp
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.MapHub<ChatHub>("/chatHub");
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}"

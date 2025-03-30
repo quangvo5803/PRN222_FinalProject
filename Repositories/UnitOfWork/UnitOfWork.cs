@@ -13,6 +13,7 @@ namespace Repositories.UnitOfWork
         public IFeedbackRepository Feedback { get; private set; }
         public IShoppingCartRepository ShoppingCart { get; private set; }
         public IOrderDetailRepository OrderDetail { get; private set; }
+        public IMessageRepository Message { get; private set; }
         public IOrderRepository Order { get; private set; }
         private ApplicationDbContext _db;
 
@@ -27,6 +28,7 @@ namespace Repositories.UnitOfWork
             ShoppingCart = new ShoppingCartRepository(_db);
             OrderDetail = new OrderDetailRepository(_db);
             Order = new OrderRepository(_db);
+            Message = new MessageRepository(_db);
         }
 
         public void Save()
