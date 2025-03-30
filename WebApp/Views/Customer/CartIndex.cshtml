@@ -95,7 +95,10 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    quantityInput.value = result.newCount;
+                    if (result.removed) {
+                        cartItem.remove();
+                    } else {
+                        quantityInput.value = result.newCount;
                     itemTotal.textContent = result.itemTotal.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
                     decreaseButton.classList.remove('disabled'); // Bật nút "-" khi quantity > 1
                     updateCartSummary(result);
@@ -122,7 +125,10 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    quantityInput.value = result.newCount;
+                    if (result.removed) {
+                        cartItem.remove();
+                    } else {
+                        quantityInput.value = result.newCount;
                     itemTotal.textContent = result.itemTotal.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
                     if (result.newCount === 1) button.classList.add('disabled');
                     updateCartSummary(result);

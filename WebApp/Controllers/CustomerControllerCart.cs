@@ -72,6 +72,7 @@ namespace WebApp.Controllers
             _unitOfWork.Save();
 
             // Tính lại tổng giá
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var cartItems = _unitOfWork
                 .ShoppingCart.GetRange(
                     c => c.UserId.ToString() == userId,
@@ -107,12 +108,34 @@ namespace WebApp.Controllers
                 );
             }
 
+            // Tính số lượng mới
             int newCount = cartItem.Count + change;
             if (newCount >= 1)
-            {
-                cartItem.Count = newCount;
-                _unitOfWork.ShoppingCart.Update(cartItem);
-                _unitOfWork.Save();
+                {
+                    if (item.Product != null)
+                    {
+                        totalPrice += item.Product.Price * item.Count;
+                    }
+                }
+
+                return Json(
+                    new
+                    {
+                        success = false,
+                        message = "The quantity cannot be less than 1.",
+                        newCount = cartItem.Count,
+                        itemTotal = cartItem.Product?.Price * cartItem.Count,
+                        totalPrice,
+                        cartCount = cartItems.Count,
+                        removed = false,
+                    }
+                );
+            }
+
+            // Cập nhật số lượng
+            cartItem.Count = newCount;
+            _unitOfWork.ShoppingCart.Update(cartItem);
+            _unitOfWork.Save();
             }
 
             var cartItems = _unitOfWork
