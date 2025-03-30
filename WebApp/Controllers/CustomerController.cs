@@ -157,6 +157,7 @@ namespace WebApp.Controllers
             //return Ok("Images count: " + Images?.Count);
             TempData["success"] = "Feedback submitted successfully";
             return RedirectToAction("Menu", "Home");
+        }
 
         public IActionResult CartIndex()
         {
