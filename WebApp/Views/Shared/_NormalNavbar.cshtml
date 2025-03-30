@@ -21,7 +21,7 @@
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li class="nav-item me-3">
-                        <a class="d-block" asp-area="" asp-controller="Customer" asp-action="" title="Shopping Cart">
+                        <a class="d-block" asp-area="" asp-controller="Customer" asp-action="CartIndex" title="Shopping Cart">
                             <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
                                 <i class="fa-solid fa-cart-shopping"></i>
                             </div>
@@ -30,14 +30,14 @@
                     <li class="nav-item me-3">
                         <a class="d-block" asp-area="" asp-controller="Customer" asp-action="Profile" title="Profile">
                             <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                                <i class="bi bi-person-fill fs-5 text-dark"></i>
+                                <i class="fa-solid fa-user"></i>
                             </div>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="d-block" onclick="document.getElementById('logoutForm').submit();" style="cursor: pointer;" title="Logout">
                             <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                                <i class="bi bi-box-arrow-right fs-5 text-danger"></i>
+                                <i class="fa-solid fa-right-from-bracket text-danger"></i>
                             </div>
                         </a>
                         <form id="logoutForm" method="post" asp-action="Logout" asp-controller="Home" class="d-none">
@@ -49,14 +49,14 @@
                     <li class="nav-item me-3">
                         <a class="d-block" asp-action="Register" asp-controller="Home" title="Register">
                             <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                                <i class="bi bi-person-plus-fill fs-5 text-dark"></i>
+                                <i class="fa-solid fa-user-plus"></i>
                             </div>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="d-block" asp-action="Login" asp-controller="Home" title="Login">
                             <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                                <i class="bi bi-box-arrow-in-right fs-5 text-dark"></i>
+                                <i class="fa-solid fa-right-to-bracket"></i>
                             </div>
                         </a>
                     </li>

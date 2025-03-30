@@ -19,6 +19,9 @@ namespace WebApp.Controllers
 
         public IActionResult Index()
         {
+            var feedbacks = _unitOfWork.Feedback.GetAll();
+            ViewBag.AvgRating = feedbacks.Any() ? feedbacks.Average(f => f.FeedbackStars) : 0;
+            ViewBag.UserCount = _unitOfWork.User.GetAll().ToList().Count;
             return View();
         }
 
@@ -31,7 +34,19 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult GetAllProduct()
         {
-            var products = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductAvatar");
+            var products = _unitOfWork
+                .Product.GetAll(includeProperties: "Category,ProductAvatar,Feedbacks")
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Price,
+                    CategoryName = p.Category?.Name,
+                    AvgRating = p.Feedbacks.Any() ? p.Feedbacks.Average(f => f.FeedbackStars) : 0,
+                    FeedbackCount = p.Feedbacks.Count(),
+                })
+                .ToList();
+            ;
             return Json(new { data = products });
         }
 
@@ -290,7 +305,7 @@ namespace WebApp.Controllers
 
 
         //Start CRUD Customer
-        
+
         public IActionResult CustomerList()
         {
             return View();
@@ -299,9 +314,10 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult GetAllCustomer()
         {
-                var customers = _unitOfWork.User.GetRange(u => u.Role == UserRole.Customer);
-                return Json(new { data = customers });
+            var customers = _unitOfWork.User.GetRange(u => u.Role == UserRole.Customer);
+            return Json(new { data = customers });
         }
+
         [HttpGet]
         public IActionResult CustomerDetail(Guid id)
         {
@@ -312,6 +328,7 @@ namespace WebApp.Controllers
             }
             return View(customer);
         }
+
         //End CRUD Customer
 
 
@@ -320,12 +337,14 @@ namespace WebApp.Controllers
         {
             return View();
         }
+
         [HttpGet]
         public IActionResult GetAllCategory()
         {
             var categories = _unitOfWork.Category.GetAll();
             return Json(new { data = categories });
         }
+
         [HttpGet]
         public IActionResult CreateCategory()
         {
@@ -345,7 +364,6 @@ namespace WebApp.Controllers
             }
             TempData["error"] = "Category created successfully";
             return RedirectToAction("CategoryList");
-            
         }
 
         [HttpGet]
@@ -396,9 +414,25 @@ namespace WebApp.Controllers
             TempData["success"] = "Delete successfully";
             return Json(new { success = true, message = "Delete Success" });
         }
+
         //End CRUD Category
 
+        public IActionResult ViewProductFeedback(int id)
+        {
+            var product = _unitOfWork.Product.Get(p => p.Id == id);
+            if (product == null)
+            {
+                TempData["error"] = "Product not found";
+                return RedirectToAction("ProductList");
+            }
+            ViewBag.Product = product;
+            var feedbackOfProducts = _unitOfWork.Feedback.GetRange(
+                f => f.ProductId == id,
+                includeProperties: "User,Images"
+            );
+            return View(feedbackOfProducts);
+        }
 
-
+        //Admin Statistic
     }
 }
