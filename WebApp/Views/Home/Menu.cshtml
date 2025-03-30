@@ -78,7 +78,9 @@
                                                 <div class="w-100 d-flex flex-column text-start ps-4">
                                                     <h5 class="d-flex justify-content-between border-bottom pb-2">
                                                         <span>@food.Name</span>
-                                                        <span class="text-primary">@food.Price.ToString("C", new CultureInfo("vi-VN"))</span>
+                                                <span class="text-primary">
+                                                    @food.Price.ToString("C", new CultureInfo("vi-VN"))
+                                                </span>
                                                     </h5>
                                                     @if (!string.IsNullOrEmpty(food.Description))
                                                     {

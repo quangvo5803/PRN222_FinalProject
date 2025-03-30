@@ -4,8 +4,8 @@
     <h2 class="mb-4">Your Shopping Cart</h2>
     @if (Model == null || !Model.Any())
     {
-        <p>Giỏ hàng của bạn đang trống.</p>
-        <a asp-action="Product" asp-controller="Customer" class="btn btn-primary">Tiếp tục mua sắm</a>
+        <p>Your shopping cart is empty.</p>
+        <a asp-action="Menu" asp-controller="Home" class="btn btn-primary">Continue shopping</a>
     }
     else
     {
@@ -20,11 +20,11 @@
                             <div class="me-3">
                                 @if (item.Product?.ProductAvatar != null)
                                 {
-                                    <img src="@Url.Content(item.Product.ProductAvatar.ImagePath)" alt="@item.Product.Name" style="width: 100px; height: 100px; object-fit: contain;" />
+                                    <img src="/img/products/@item.Product.ProductAvatar.ImagePath" alt="@item.Product.Name" style="width: 100px; height: 100px; object-fit: contain;" />
                                 }
                                 else
                                 {
-                                    <img src="/img/products/placeholder.jpg" alt="Placeholder" style="width: 100px; height: 100px; object-fit: contain;" />
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="Placeholder" style="width: 100px; height: 100px; object-fit: contain;" />
                                 }
                             </div>
                             <!-- Thông tin sản phẩm -->
@@ -39,8 +39,8 @@
                                     </div>
                                     <!-- Giá -->
                                     <div>
-                                        <h5 class="text-primary mb-0 item-total">$@(item.Product?.Price * item.Count)</h5>
-                                        <small class="text-muted">$@item.Product?.Price / per item</small>
+                                        <h5 class="text-primary mb-0 item-total">@(((item.Product != null ? item.Product.Price * item.Count : 0).ToString("C", new CultureInfo("vi-VN"))))</h5>
+                                        <small class="text-muted">@(item.Product?.Price.ToString("C", new CultureInfo("vi-VN"))) / per item</small>
                                     </div>
                                 </div>
                             </div>
@@ -65,7 +65,7 @@
                         <!-- Tổng kết -->
                         <div class="d-flex justify-content-between mb-3">
                             <strong>Total Price:</strong>
-                            <strong class="total-price">$@Model.Sum(item => item.Product.Price * item.Count)</strong>
+                            <strong class="total-price">@(Model.Sum(item => item.Product.Price * item.Count).ToString("C", new CultureInfo("vi-VN")))</strong>
                         </div>
                         <!-- Nút thanh toán -->
                         <a asp-action="Checkout" asp-controller="Customer" class="btn btn-success w-100 mb-2">Make Purchase</a>

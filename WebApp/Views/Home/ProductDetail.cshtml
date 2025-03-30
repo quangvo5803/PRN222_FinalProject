@@ -101,7 +101,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <span class="h5">@Model.Price.ToString("C", new CultureInfo("vi-VN"))</span>
+                        <span class="h5">
+                            @Model.Price.ToString("C", new CultureInfo("vi-VN"))
+                        </span>
                     </div>
 
                     <dl class="row">
@@ -110,12 +112,7 @@
 
                     </dl>
                     <hr />
-                    <a asp-action="Checkout" asp-controller="Customer" class="btn btn-success shadow-0"> Buy now </a>
-                    <a asp-action="CartIndex" asp-controller="Customer" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
-                    @if (Model != null)
-                    {
-                        <partial name="_Feedback" model="Model" />
-                    }
+                    <a asp-action="AddToCart" asp-controller="Customer" asp-route-productId="@Model.Id" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
                 </div>
             </main> 
         </div>

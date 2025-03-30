@@ -26,7 +26,7 @@ function loadDataTable() {
                 "data": 'price',
                 "width": "5%",
                 "render": function (data, type, row) {
-                    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(data);
+                    return new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(data);
                 }
             },
             {
