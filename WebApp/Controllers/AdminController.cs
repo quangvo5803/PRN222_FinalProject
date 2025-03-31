@@ -27,19 +27,23 @@ namespace WebApp.Controllers
 
             var currentMonth = DateTime.Now.Month;
             //Total orders monthly
-            var totalOrdersMonthly = _unitOfWork.Order.GetAll()
-                .Where(o => o.OrderDate.Month == currentMonth)
+            var totalOrdersMonthly = _unitOfWork
+                .Order.GetAll()
+                .Where(o => o.OrderDate.Month == currentMonth && o.Status == OrderStatus.Completed)
                 .Count();
             ViewBag.TotalOrdersMonthly = totalOrdersMonthly;
 
             //Earnings month
-            var earningsMonth = _unitOfWork.Order.GetAll()
-                .Where(o => o.OrderDate.Month == currentMonth)
-                .Sum(o => o.TotalPrice); 
+            var earningsMonth = _unitOfWork
+                .Order.GetAll()
+                .Where(o => o.OrderDate.Month == currentMonth && o.Status == OrderStatus.Completed)
+                .Sum(o => o.TotalPrice);
             ViewBag.EarningsMonth = earningsMonth;
 
             // Biểu đồ đường
-            var orderList = _unitOfWork.Order.GetAll().ToList();
+            var orderList = _unitOfWork
+                .Order.GetRange(o => o.Status == OrderStatus.Completed)
+                .ToList();
             var totalPrice = new List<double>(new double[12]);
 
             int selectedYear = year ?? DateTime.Now.Year;
@@ -48,12 +52,10 @@ namespace WebApp.Controllers
                 var month = order.OrderDate.Month - 1;
                 totalPrice[month] += order.TotalPrice;
             }
-            var availableYears = orderList.Select(o => o.OrderDate.Year).Distinct()
-                .Select(y => new SelectListItem
-                {
-                    Value = y.ToString(),
-                    Text = y.ToString()
-                });
+            var availableYears = orderList
+                .Select(o => o.OrderDate.Year)
+                .Distinct()
+                .Select(y => new SelectListItem { Value = y.ToString(), Text = y.ToString() });
             ViewBag.TotalPrice = totalPrice;
             ViewBag.SelectedYear = selectedYear;
             ViewBag.Years = availableYears;
@@ -61,20 +63,19 @@ namespace WebApp.Controllers
             //biểu đồ tròn
             var currenYear = DateTime.Now.Year;
             var orderDetail = _unitOfWork.OrderDetail.GetRange(
-                od => od.Order.OrderDate.Year == currenYear, 
+                od =>
+                    od.Order.OrderDate.Year == currenYear
+                    && od.Order.Status == OrderStatus.Completed,
                 includeProperties: "Order,Product,Product.Category"
             );
-            var categoryName = orderDetail.GroupBy(od => od.Product.Category.Name)
-                .Select(g => new
-                {
-                    CategoryName = g.Key,
-                    TotalQuantity = g.Sum(od => od.Quantity)
-                }).ToList();
+            var categoryName = orderDetail
+                .GroupBy(od => od.Product.Category.Name)
+                .Select(g => new { CategoryName = g.Key, TotalQuantity = g.Sum(od => od.Quantity) })
+                .ToList();
             ViewBag.CategoryNames = categoryName.Select(cs => cs.CategoryName).ToList();
             ViewBag.TotalQuantities = categoryName.Select(cs => cs.TotalQuantity).ToList();
             return View();
         }
-
 
         //Start CRUD Product
         public IActionResult ProductList()
