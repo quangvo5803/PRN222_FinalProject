@@ -1,0 +1,318 @@
+﻿@using System.Security.Claims
+@model IEnumerable<Message>
+@{
+    ViewData["Title"] = "Admin Chat";
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    var customers = Model
+        .GroupBy(m => m.SenderId)
+        .Select(g => new
+        {
+            SenderId = g.Key,
+            SenderName = g.First().Sender?.UserName ?? "Unknown",
+            LatestMessageTime = g.Max(m => m.SentAt)
+        })
+        .OrderByDescending(c => c.LatestMessageTime)
+        .ToList();
+
+    var selectedCustomerId = ViewBag.CustomerId ?? (customers.Any() ? customers.First().SenderId.ToString() : null);
+}
+
+<div class="admin-margin">
+    <h2 class="page-title">Manage Customer Messages</h2>
+
+    <div class="chat-container">
+        <!-- Left Column: Customer List -->
+        <div class="customer-list">
+            <h4 class="section-title">Customers</h4>
+            @if (customers.Any())
+            {
+                <ul class="customer-items">
+                    @foreach (var customer in customers)
+                    {
+                        <li class="@(customer.SenderId.ToString() == selectedCustomerId ? "selected" : "")"
+                            onclick="selectCustomer('@customer.SenderId')">
+                            <strong>@customer.SenderName</strong>
+                            <small>@customer.LatestMessageTime.ToString("g")</small>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="no-data">No customers have messaged yet.</p>
+            }
+        </div>
+
+        <!-- Right Column: Messages -->
+        <div class="message-panel">
+            <div id="messageContainer" class="message-container">
+                @if (selectedCustomerId != null)
+                {
+                    var messages = Model.Where(m => m.SenderId.ToString() == selectedCustomerId || m.AdminId.ToString() == selectedCustomerId);
+                    foreach (var message in messages)
+                    {
+                        var isSender = message.SenderId.ToString() == userId;
+                        <div class="message @(isSender ? "sent" : "received")">
+                            <strong>@(message.Sender?.UserName ?? "Unknown")</strong>
+                            <small>(@message.SentAt.ToString("g"))</small><br />
+                            @message.Content
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="no-selection">Select a customer to view messages.</p>
+                }
+            </div>
+            <div class="message-input">
+                <input type="text" id="messageInput" placeholder="Type a message..." />
+                <button id="sendButton"><i class="bi bi-send-fill"></i> Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentUserId = "@userId";
+    let selectedCustomerId = "@selectedCustomerId";
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chatHub")
+        .build();
+
+    connection.start().then(() => console.log("Connected")).catch(err => console.error(err));
+
+    connection.on("ReceiveMessage", (message) => {
+        if (message.senderId === selectedCustomerId || message.receiverId === selectedCustomerId) {
+            const messageContainer = document.getElementById("messageContainer");
+            const isSender = message.senderId === currentUserId;
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `message ${isSender ? "sent" : "received"}`;
+            messageDiv.innerHTML = `
+                <strong>${message.senderName}</strong> <small>(${message.sentAt})</small><br/>
+                ${message.content}
+            `;
+            messageContainer.appendChild(messageDiv);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+
+            if (!isSender && !message.isRead) {
+                connection.invoke("MarkAsRead", message.id);
+            }
+        }
+    });
+
+    connection.on("SupportRequested", (customerName) => {
+        alert(`New support request from ${customerName}`);
+        window.location.reload();
+    });
+
+    document.getElementById("sendButton").addEventListener("click", () => {
+        const messageInput = document.getElementById("messageInput");
+        const content = messageInput.value.trim();
+        if (content) {
+            if (!selectedCustomerId) {
+                alert("Please select a customer to send the message to!");
+                return;
+            }
+            connection.invoke("SendMessage", currentUserId, selectedCustomerId, content)
+                .catch(err => console.error(err));
+            messageInput.value = "";
+        }
+    });
+
+    function selectCustomer(customerId) {
+        selectedCustomerId = customerId;
+        document.querySelectorAll(".customer-items li").forEach(li => li.classList.remove("selected"));
+        event.currentTarget.classList.add("selected");
+
+        fetch(`/AdminChat/GetMessages?customerId=${customerId}`)
+            .then(response => response.json())
+            .then(messages => {
+                const messageContainer = document.getElementById("messageContainer");
+                messageContainer.innerHTML = "";
+                messages.forEach(message => {
+                    const isSender = message.senderId === currentUserId;
+                    const messageDiv = document.createElement("div");
+                    messageDiv.className = `message ${isSender ? "sent" : "received"}`;
+                    messageDiv.innerHTML = `
+                        <strong>${message.senderName}</strong> <small>(${message.sentAt})</small><br/>
+                        ${message.content}
+                    `;
+                    messageContainer.appendChild(messageDiv);
+                });
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            })
+            .catch(err => console.error(err));
+    }
+</script>
+
+<style>
+    .admin-margin {
+        padding: 20px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .chat-container {
+        display: flex;
+        height: 500px;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    /* Customer List */
+    .customer-list {
+        width: 30%;
+        border-right: 1px solid #e0e0e0;
+        overflow-y: auto;
+        padding: 15px;
+        background-color: #f9f9f9;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 500;
+        color: #007bff;
+        margin-bottom: 15px;
+    }
+
+    .customer-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .customer-items li {
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+            .customer-items li:hover {
+                background-color: #e0e0e0;
+            }
+
+            .customer-items li.selected {
+                background-color: #007bff;
+                color: white;
+            }
+
+            .customer-items li strong {
+                font-size: 16px;
+            }
+
+            .customer-items li small {
+                font-size: 12px;
+                opacity: 0.8;
+            }
+
+    .no-data {
+        color: #666;
+        font-style: italic;
+    }
+
+    /* Message Panel */
+    .message-panel {
+        width: 70%;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .message-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        background-color: #f1f3f5;
+        border-radius: 10px;
+    }
+
+    .message {
+        margin: 10px 0;
+        padding: 12px 15px;
+        border-radius: 10px;
+        max-width: 70%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        word-wrap: break-word;
+    }
+
+        .message.sent {
+            background-color: #007bff;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.received {
+            background-color: #e9ecef;
+            color: #333;
+        }
+
+        .message strong {
+            font-size: 14px;
+        }
+
+        .message small {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+    .no-selection {
+        color: #666;
+        font-style: italic;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .message-input {
+        padding: 10px 0;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+    }
+
+        .message-input input {
+            width: 70%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+            margin-right: 10px;
+            transition: border-color 0.3s ease;
+        }
+
+            .message-input input:focus {
+                border-color: #007bff;
+            }
+
+        .message-input button {
+            width: 25%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .message-input button:hover {
+                background-color: #0056b3;
+            }
+
+            .message-input button i {
+                margin-right: 5px;
+            }
+</style>

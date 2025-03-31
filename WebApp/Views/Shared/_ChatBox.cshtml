@@ -1,0 +1,229 @@
+﻿@using System.Security.Claims
+@{
+    var isLoggedIn = User.Identity.IsAuthenticated;
+    var userId = isLoggedIn ? User.FindFirst(ClaimTypes.NameIdentifier)?.Value : null;
+}
+
+@if (isLoggedIn)
+{
+    <!-- Chat Bubble -->
+    <div id="chatBubble" class="chat-bubble">
+        <i class="bi bi-chat-dots-fill"></i> <!-- Bootstrap icon for chat -->
+        <span>Chat</span>
+    </div>
+
+    <!-- Chat Box -->
+    <div id="chatBox" class="chat-box">
+        <div class="chat-header">
+            <h5>Chat Support</h5>
+            <button id="closeChat" class="close-btn">&times;</button>
+        </div>
+        <div id="messageContainer" class="message-container">
+            <!-- Messages will be added dynamically via JS -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Type a message..." />
+            <button id="sendButton"><i class="bi bi-send-fill"></i></button>
+        </div>
+    </div>
+
+    <!-- Include SignalR Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    <script>
+        const currentUserId = "@userId";
+        const chatBox = document.getElementById("chatBox");
+        const chatBubble = document.getElementById("chatBubble");
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .build();
+
+        connection.start().then(() => {
+            console.log("Connected to SignalR Hub");
+        }).catch(err => console.error(err));
+
+        connection.on("ReceiveMessage", (message) => {
+            const messageContainer = document.getElementById("messageContainer");
+            const isSender = message.senderId === currentUserId;
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `message ${isSender ? "sent" : "received"}`;
+            messageDiv.innerHTML = `
+                <strong>${message.senderName}</strong> <small>(${message.sentAt})</small><br/>
+                ${message.content}
+            `;
+            messageContainer.appendChild(messageDiv);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        });
+
+        chatBubble.addEventListener("click", () => {
+            chatBox.style.display = chatBox.style.display === "none" || chatBox.style.display === "" ? "flex" : "none";
+        });
+
+        document.getElementById("closeChat").addEventListener("click", () => {
+            chatBox.style.display = "none";
+        });
+
+        document.getElementById("sendButton").addEventListener("click", () => {
+            const messageInput = document.getElementById("messageInput");
+            const content = messageInput.value.trim();
+            if (content) {
+                connection.invoke("SendMessage", currentUserId, null, content)
+                    .catch(err => console.error(err));
+                messageInput.value = "";
+            }
+        });
+
+        chatBubble.addEventListener("dblclick", () => {
+            connection.invoke("RequestSupport", currentUserId)
+                .catch(err => console.error(err));
+            alert("Support request sent to Admin!");
+        });
+    </script>
+    <style>
+        /* Chat Bubble */
+        .chat-bubble {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #007bff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+            .chat-bubble:hover {
+                transform: scale(1.1);
+                background-color: #0056b3;
+            }
+
+            .chat-bubble i {
+                margin-right: 5px;
+            }
+
+        /* Chat Box */
+        .chat-box {
+            display: none;
+            flex-direction: column;
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 320px;
+            height: 420px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Chat Header */
+        .chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+            .close-btn:hover {
+                color: #ffcccc;
+            }
+
+        /* Message Container */
+        .message-container {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 75%;
+            word-wrap: break-word;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+            .message.sent {
+                background-color: #007bff;
+                color: white;
+                margin-left: auto;
+            }
+
+            .message.received {
+                background-color: #e9ecef;
+                color: #333;
+            }
+
+            .message strong {
+                font-size: 14px;
+            }
+
+            .message small {
+                font-size: 12px;
+                opacity: 0.8;
+            }
+
+        /* Chat Input */
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+            background-color: #fff;
+        }
+
+            .chat-input input {
+                flex: 1;
+                padding: 8px 12px;
+                border: 1px solid #ccc;
+                border-radius: 20px;
+                outline: none;
+                font-size: 14px;
+                margin-right: 10px;
+                transition: border-color 0.3s ease;
+            }
+
+                .chat-input input:focus {
+                    border-color: #007bff;
+                }
+
+            .chat-input button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 20px;
+                padding: 8px 15px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+                .chat-input button:hover {
+                    background-color: #0056b3;
+                }
+    </style>
+}
+

@@ -12,6 +12,7 @@ namespace Repositories.UnitOfWork
         IShoppingCartRepository ShoppingCart { get; }
         IOrderDetailRepository OrderDetail { get; }
         IOrderRepository Order { get; }
+        IMessageRepository Message { get; }
         void Save();
     }
 }

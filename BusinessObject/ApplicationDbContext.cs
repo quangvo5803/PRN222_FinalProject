@@ -16,6 +16,8 @@ namespace BusinessObject
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Message> Messages { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
