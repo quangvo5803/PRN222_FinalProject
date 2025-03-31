@@ -2,6 +2,8 @@
     ViewData["Title"] = "Home Page";
     var avgRating = ViewBag.AvgRating as double?;
     var userCount = ViewBag.UserCount as int?;
+    var totalOrdersMonthly = ViewBag.TotalOrdersMonthly as int?;
+    var earningsMonth = ViewBag.EarningsMonth as double?;
 }
 <div class="admin-margin">
     <div class="container mt-5">
@@ -15,7 +17,7 @@
                                 <div class="text-xs font-weight-bold text-uppercase mb-1" style="color:#4e73df !important">
                                     Total Order(Monthly)
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@totalOrdersMonthly</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-truck fa-2x text-gray-300"></i>
@@ -34,10 +36,12 @@
                                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                     Earnings (Month)
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    @String.Format("{0:N0} VND", earningsMonth)
+                                </div>
                             </div>
                             <div class="col-auto">
-                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -107,6 +111,18 @@
                     <!-- Card Header - Dropdown -->
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                        <div class="dropdown">
+                            <form id="yearForm" method="get" asp-controller="Admin" asp-action="Index">
+                                <select id="yearSelector" name="year" class="form-control" onchange="this.form.submit()">
+                                    @foreach (var year in ViewBag.Years)
+                                    {
+                                        <option value="@year.Value" selected="@(year.Value == ViewBag.SelectedYear.ToString() ? "selected" : null)">
+                                            @year.Value
+                                        </option>
+                                    }
+                                </select>
+                            </form>
+                        </div>
                     </div>
                     <!-- Card Body -->
                     <div class="card-body">
@@ -170,14 +186,15 @@
 @section Scripts{
     <script>
         // Biểu đồ đường (Earnings Overview)
+        var totalPriceData = @Html.Raw(Json.Serialize(ViewBag.TotalPrice));
         var ctx1 = document.getElementById("myAreaChart").getContext("2d");
         var myAreaChart = new Chart(ctx1, {
             type: "line",
             data: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                 datasets: [{
-                    label: "Earnings ($)",
-                    data: [10000, 15000, 20000, 25000, 30000, 40000],
+                    label: "Earnings (VND)",
+                    data: totalPriceData,
                     backgroundColor: "rgba(78, 115, 223, 0.2)",
                     borderColor: "rgba(78, 115, 223, 1)",
                     borderWidth: 2,
@@ -199,19 +216,24 @@
         });
 
         // Biểu đồ tròn (Revenue Sources)
+        var labels = @Html.Raw(Json.Serialize(ViewBag.CategoryNames));
+        var data = @Html.Raw(Json.Serialize(ViewBag.TotalQuantities));
         var ctx2 = document.getElementById("myPieChart").getContext("2d");
         var myPieChart = new Chart(ctx2, {
             type: "doughnut",
             data: {
-                labels: ["Food", "Drink", "Combo"],
+                labels: labels,
                 datasets: [{
-                    data: [55, 30, 15],
-                    backgroundColor: ["#FF6B6B", "#4D96FF", "#F9C74F"]
+                    data: data,
+                    backgroundColor: ["#FF6B6B", "#4D96FF", "#F9C74F", "#90BE6D", "#F94144"]
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                legend: {
+                    position: 'bottom'
+                }
             }
         });
     </script>

@@ -1,6 +1,8 @@
 ﻿using BusinessObject.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Repositories.UnitOfWork;
 
 namespace WebApp.Controllers
@@ -17,13 +19,62 @@ namespace WebApp.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? year)
         {
             var feedbacks = _unitOfWork.Feedback.GetAll();
             ViewBag.AvgRating = feedbacks.Any() ? feedbacks.Average(f => f.FeedbackStars) : 0;
             ViewBag.UserCount = _unitOfWork.User.GetAll().ToList().Count;
+
+            var currentMonth = DateTime.Now.Month;
+            //Total orders monthly
+            var totalOrdersMonthly = _unitOfWork.Order.GetAll()
+                .Where(o => o.OrderDate.Month == currentMonth)
+                .Count();
+            ViewBag.TotalOrdersMonthly = totalOrdersMonthly;
+
+            //Earnings month
+            var earningsMonth = _unitOfWork.Order.GetAll()
+                .Where(o => o.OrderDate.Month == currentMonth)
+                .Sum(o => o.TotalPrice); 
+            ViewBag.EarningsMonth = earningsMonth;
+
+            // Biểu đồ đường
+            var orderList = _unitOfWork.Order.GetAll().ToList();
+            var totalPrice = new List<double>(new double[12]);
+
+            int selectedYear = year ?? DateTime.Now.Year;
+            foreach (var order in orderList.Where(o => o.OrderDate.Year == selectedYear))
+            {
+                var month = order.OrderDate.Month - 1;
+                totalPrice[month] += order.TotalPrice;
+            }
+            var availableYears = orderList.Select(o => o.OrderDate.Year).Distinct()
+                .Select(y => new SelectListItem
+                {
+                    Value = y.ToString(),
+                    Text = y.ToString()
+                });
+            ViewBag.TotalPrice = totalPrice;
+            ViewBag.SelectedYear = selectedYear;
+            ViewBag.Years = availableYears;
+
+            //biểu đồ tròn
+            var currenYear = DateTime.Now.Year;
+            var orderDetail = _unitOfWork.OrderDetail.GetRange(
+                od => od.Order.OrderDate.Year == currenYear, 
+                includeProperties: "Order,Product,Product.Category"
+            );
+            var categoryName = orderDetail.GroupBy(od => od.Product.Category.Name)
+                .Select(g => new
+                {
+                    CategoryName = g.Key,
+                    TotalQuantity = g.Sum(od => od.Quantity)
+                }).ToList();
+            ViewBag.CategoryNames = categoryName.Select(cs => cs.CategoryName).ToList();
+            ViewBag.TotalQuantities = categoryName.Select(cs => cs.TotalQuantity).ToList();
             return View();
         }
+
 
         //Start CRUD Product
         public IActionResult ProductList()
