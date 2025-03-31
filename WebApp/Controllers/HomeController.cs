@@ -446,6 +446,12 @@ public class HomeController : Controller
             f => f.ProductId == id,
             includeProperties: "User,Images"
         );
+        if (product != null && product.ProductImages != null)
+        {
+            product.ProductImages = product
+                .ProductImages.Where(img => img.FeedbackId == null)
+                .ToList();
+        }
         int totalFeedbacks = feedbacks.Count();
 
         var feedbackPage = feedbacks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
