@@ -69,7 +69,7 @@
                         </div>
                         <!-- Nút thanh toán -->
                         <a asp-action="Checkout" asp-controller="Customer" class="btn btn-success w-100 mb-2">Make Purchase</a>
-                        <a asp-action="Product" asp-controller="Customer" class="btn btn-outline-secondary w-100">Back to Shop</a>
+                        <a asp-action="Menu" asp-controller="Home" class="btn btn-outline-secondary w-100">Back to Shop</a>
                     </div>
                 </div>
             </div>
@@ -79,10 +79,9 @@
 
 @section Scripts {
     <script>
-        // Tăng số lượng
-        document.querySelectorAll('.increase-quantity').forEach(button => {
-            button.addEventListener('click', async () => {
-                const cartItem = button.closest('.cart-item');
+                document.querySelectorAll('.increase-quantity').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const cartItem = event.currentTarget.closest('.cart-item');
                 const cartId = cartItem.dataset.id;
                 const quantityInput = cartItem.querySelector('.quantity');
                 const itemTotal = cartItem.querySelector('.item-total');
@@ -92,53 +91,61 @@
                     headers: { 'Content-Type': 'application/json' }
                 });
 
+                if (!response.ok) return console.error("Error updating quantity");
+
                 const result = await response.json();
                 if (result.success) {
                     if (result.removed) {
                         cartItem.remove();
                     } else {
                         quantityInput.value = result.newCount;
-                        itemTotal.textContent = `$${result.itemTotal}`;
+                        itemTotal.textContent = result.itemTotal.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                        updateCartSummary(result);
                     }
-                    updateCartSummary(result);
-                } else {
-                    alert(result.message);
                 }
             });
         });
 
-        // Giảm số lượng
-        document.querySelectorAll('.decrease-quantity').forEach(button => {
-            button.addEventListener('click', async () => {
-                const cartItem = button.closest('.cart-item');
+                document.querySelectorAll('.decrease-quantity').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const cartItem = event.currentTarget.closest('.cart-item');
                 const cartId = cartItem.dataset.id;
                 const quantityInput = cartItem.querySelector('.quantity');
                 const itemTotal = cartItem.querySelector('.item-total');
+
+                // Kiểm tra nếu số lượng hiện tại là 1 thì hiển thị thông báo
+                if (parseInt(quantityInput.value) === 1) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Something went wrong!",
+                    });
+                    return; 
+                }
 
                 const response = await fetch(`/Customer/UpdateQuantity?cartId=${cartId}&change=-1`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' }
                 });
 
+                if (!response.ok) return console.error("Error updating quantity");
+
                 const result = await response.json();
                 if (result.success) {
                     if (result.removed) {
                         cartItem.remove();
                     } else {
                         quantityInput.value = result.newCount;
-                        itemTotal.textContent = `$${result.itemTotal}`;
+                        itemTotal.textContent = result.itemTotal.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                        updateCartSummary(result);
                     }
-                    updateCartSummary(result);
-                } else {
-                    alert(result.message);
                 }
             });
         });
 
-        // Xóa sản phẩm
         document.querySelectorAll('.remove-item').forEach(button => {
-            button.addEventListener('click', async () => {
-                const cartItem = button.closest('.cart-item');
+            button.addEventListener('click', async (event) => {
+                const cartItem = event.currentTarget.closest('.cart-item');
                 const cartId = cartItem.dataset.id;
 
                 const response = await fetch(`/Customer/RemoveFromCart?cartId=${cartId}`, {
@@ -146,21 +153,24 @@
                     headers: { 'Content-Type': 'application/json' }
                 });
 
+                if (!response.ok) return console.error("Lỗi khi xóa sản phẩm");
+
                 const result = await response.json();
                 if (result.success) {
                     cartItem.remove();
                     updateCartSummary(result);
-                } else {
-                    alert(result.message);
                 }
             });
         });
 
-        // Cập nhật tổng giá
         function updateCartSummary(result) {
-            document.querySelector('.total-price').textContent = `$${result.totalPrice}`;
+            const totalPriceElement = document.querySelector('.total-price');
+            if (totalPriceElement) {
+                totalPriceElement.textContent = result.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            }
+
             if (result.cartCount === 0) {
-                location.reload(); // Tải lại trang nếu giỏ hàng trống
+                location.reload();
             }
         }
     </script>

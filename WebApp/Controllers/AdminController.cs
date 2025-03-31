@@ -485,5 +485,79 @@ namespace WebApp.Controllers
         }
 
         //Admin Statistic
+
+
+        // End Admin Statistic
+
+
+        // Admin manage order
+        public IActionResult OrderList()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetAllOrders()
+        {
+            var orders = _unitOfWork
+                .Order.GetAll(includeProperties: "User")
+                .Select(o => new
+                {
+                    o.Id,
+                    UserName = o.User?.UserName ?? "N/A",
+                    o.TotalPrice,
+                    OrderDate = o.OrderDate.ToString("dd/MM/yyyy HH:mm"),
+                    Status = o.Status.ToString(),
+                })
+                .ToList();
+            return Json(new { data = orders });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CompleteOrder(int id)
+        {
+            var order = _unitOfWork.Order.Get(o => o.Id == id);
+            if (order == null)
+            {
+                return Json(new { success = false, message = "Order not found." });
+            }
+            if (order.Status != OrderStatus.Pending)
+            {
+                return Json(
+                    new { success = false, message = "Only pending orders can be completed." }
+                );
+            }
+
+            order.Status = OrderStatus.Completed;
+            _unitOfWork.Order.Update(order);
+            _unitOfWork.Save();
+            TempData["success"] = "Order completed successfully.";
+            return Json(new { success = true, message = "Order completed successfully." });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CancelOrder(int id)
+        {
+            var order = _unitOfWork.Order.Get(o => o.Id == id);
+            if (order == null)
+            {
+                return Json(new { success = false, message = "Order not found." });
+            }
+            if (order.Status != OrderStatus.Pending)
+            {
+                return Json(
+                    new { success = false, message = "Only pending orders can be canceled." }
+                );
+            }
+
+            order.Status = OrderStatus.Cancelled;
+            _unitOfWork.Order.Update(order);
+            _unitOfWork.Save();
+            TempData["success"] = "Order canceled successfully.";
+            return Json(new { success = true, message = "Order canceled successfully." });
+        }
+        // End Admin manage order
     }
 }
