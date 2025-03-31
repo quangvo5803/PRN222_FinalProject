@@ -20,7 +20,7 @@
                 <div class="d-flex justify-content-center animated slideInLeft">
                     <div class="btn-group" role="group">
                         <a asp-action="" asp-controller="" class="btn btn-primary py-sm-3 px-sm-5 me-3">Book A Table</a>
-                        <a asp-action="" asp-controller="" class="btn btn-outline-primary py-sm-3 px-sm-5">Order Now</a>
+                        <a asp-action="Menu" asp-controller="Home" class="btn btn-outline-primary py-sm-3 px-sm-5">Order Now</a>
                         
                     </div>
                 </div>
@@ -196,7 +196,7 @@
                                                     "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                                                     : $"/img/products/{food.ProductAvatar.ImagePath}")"
                                          alt="Product Image"
-                                         style="width: 80px;">
+                                         style="width: 80px; height:80px;">
                                     <div class="w-100 d-flex flex-column text-start ps-4">
                                         <h5 class="d-flex justify-content-between border-bottom pb-2">
                                             <span>@food.Name</span>
@@ -231,11 +231,11 @@
                                                     "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                                                     : $"/img/products/{drink.ProductAvatar.ImagePath}")"
                                          alt="Product Image"
-                                         style="width: 80px;">
+                                         style="width: 80px; height:80px;">
                                     <div class="w-100 d-flex flex-column text-start ps-4">
                                         <h5 class="d-flex justify-content-between border-bottom pb-2">
                                             <span>@drink.Name</span>
-                                            <span class="text-primary">@drink.Price.ToString("C", new CultureInfo("en-US"))</span>
+                                            <span class="text-primary">@drink.Price.ToString("C", new CultureInfo("vi-VN"))</span>
                                         </h5>
                                         @if (!string.IsNullOrEmpty(drink.Description))
                                         {
@@ -264,11 +264,11 @@
                                                     "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                                                     : $"/img/products/{combo.ProductAvatar.ImagePath}")"
                                          alt="Product Image"
-                                         style="width: 80px;">
+                                         style="width: 80px; height:80px;">
                                     <div class="w-100 d-flex flex-column text-start ps-4">
                                         <h5 class="d-flex justify-content-between border-bottom pb-2">
                                             <span>@combo.Name</span>
-                                            <span class="text-primary">@combo.Price.ToString("C", new CultureInfo("en-US"))</span>
+                                            <span class="text-primary">@combo.Price.ToString("C", new CultureInfo("vi-VN"))</span>
                                         </h5>
                                         @if (!string.IsNullOrEmpty(combo.Description))
                                         {
@@ -283,12 +283,11 @@
                     }
                 </div>
             </div>
-            @if (randomFoodItems.Count > 8 || randomDrinkItems.Count > 8 || randomComboItems.Count > 8)
-            {
+
                 <div class="text-center mt-4">
                     <a class="btn btn-primary show-more" asp-action="Menu" asp-controller="Home">Show More</a>
                 </div>
-            }
+            
         </div>
     </div>
 </div>

@@ -71,7 +71,7 @@ namespace WebApp.Controllers
             if (PaymentMethod == "PayByCash")
             {
                 var order = CreateOrder(cartItems, totalPrice, PhoneNumber, Address, PaymentMethod);
-                TempData["success"] = "Đơn hàng đã được đặt thành công (Thanh toán khi nhận hàng).";
+                TempData["success"] = "Order placed successfully (Cash on delivery).";
                 return RedirectToAction("Order", new { orderId = order.Id });
             }
             else if (PaymentMethod == "VNPay")

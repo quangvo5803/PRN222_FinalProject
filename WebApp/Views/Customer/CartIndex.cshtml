@@ -1,5 +1,7 @@
 ﻿@model List<BusinessObject.Model.ShoppingCart>
-
+@{
+    ViewData["Title"] = "Cart";
+}
 <div class="container mt-5">
     <h2 class="mb-4">Your Shopping Cart</h2>
     @if (Model == null || !Model.Any())
