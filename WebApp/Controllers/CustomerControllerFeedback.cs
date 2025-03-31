@@ -23,13 +23,13 @@ namespace WebApp.Controllers
             {
                 TempData["error"] = "Product not found";
                 //tạm thời
-                return RedirectToAction("Menu", "Home");
+                return RedirectToAction("OrderHistory", "Customer");
             }
 
             if (feedbackStars < 1 || feedbackStars > 5)
             {
                 TempData["error"] = "Choice ";
-                return RedirectToAction("Menu", "Home");
+                return RedirectToAction("OrderHistory", "Customer");
             }
 
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -75,7 +75,7 @@ namespace WebApp.Controllers
             }
             //return Ok("Images count: " + Images?.Count);
             TempData["success"] = "Feedback submitted successfully";
-            return RedirectToAction("Menu", "Home");
+            return RedirectToAction("OrderHistory", "Customer");
         }
     }
 }

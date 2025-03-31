@@ -77,5 +77,28 @@ namespace WebApp.Controllers
             _unitOfWork.Save();
             return order;
         }
+
+        public IActionResult CancelOrder(int orderId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var order = _unitOfWork.Order.Get(
+                o => o.Id == orderId && o.UserId.ToString() == userId,
+                includeProperties: "OrderDetails"
+            );
+            if (order == null)
+            {
+                TempData["error"] = "Order not found.";
+                return RedirectToAction("OrderHistory", "Customer");
+            }
+            if (order.Status != OrderStatus.Pending)
+            {
+                TempData["error"] = "Order cannot be canceled.";
+                return RedirectToAction("OrderHistory", "Customer");
+            }
+            order.Status = OrderStatus.Cancelled;
+            _unitOfWork.Save();
+            TempData["success"] = "Order canceled successfully.";
+            return RedirectToAction("OrderHistory", "Customer");
+        }
     }
 }
