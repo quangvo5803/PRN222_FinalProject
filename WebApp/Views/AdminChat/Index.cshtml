@@ -4,7 +4,6 @@
     ViewData["Title"] = "Admin Chat";
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-    // Lấy danh sách Customer đã gửi tin nhắn
     var customers = Model
         .GroupBy(m => m.SenderId)
         .Select(g => new
@@ -16,25 +15,24 @@
         .OrderByDescending(c => c.LatestMessageTime)
         .ToList();
 
-    // Lấy customerId từ tham số URL hoặc mặc định là Customer đầu tiên trong danh sách
     var selectedCustomerId = ViewBag.CustomerId ?? (customers.Any() ? customers.First().SenderId.ToString() : null);
 }
 
 <div class="admin-margin">
-    <h2>Manage Customer Messages</h2>
+    <h2 class="page-title">Manage Customer Messages</h2>
 
-    <div style="display: flex; height: 500px;">
-        <!-- Cột trái: Danh sách Customer -->
-        <div style="width: 30%; border-right: 1px solid #ccc; overflow-y: auto; padding: 10px;">
-            <h4>Customers</h4>
+    <div class="chat-container">
+        <!-- Left Column: Customer List -->
+        <div class="customer-list">
+            <h4 class="section-title">Customers</h4>
             @if (customers.Any())
             {
-                <ul style="list-style: none; padding: 0;">
+                <ul class="customer-items">
                     @foreach (var customer in customers)
                     {
-                        <li style="padding: 10px; cursor: pointer; @(customer.SenderId.ToString() == selectedCustomerId ? "background-color: #e0e0e0;" : "")"
+                        <li class="@(customer.SenderId.ToString() == selectedCustomerId ? "selected" : "")"
                             onclick="selectCustomer('@customer.SenderId')">
-                            <strong>@customer.SenderName</strong><br />
+                            <strong>@customer.SenderName</strong>
                             <small>@customer.LatestMessageTime.ToString("g")</small>
                         </li>
                     }
@@ -42,33 +40,34 @@
             }
             else
             {
-                <p>No customers have messaged yet.</p>
+                <p class="no-data">No customers have messaged yet.</p>
             }
         </div>
 
-        <!-- Cột phải: Tin nhắn của Customer được chọn -->
-        <div style="width: 70%; display: flex; flex-direction: column; padding: 10px;">
-            <div id="messageContainer" style="flex: 1; overflow-y: auto; padding: 10px;">
+        <!-- Right Column: Messages -->
+        <div class="message-panel">
+            <div id="messageContainer" class="message-container">
                 @if (selectedCustomerId != null)
                 {
                     var messages = Model.Where(m => m.SenderId.ToString() == selectedCustomerId || m.AdminId.ToString() == selectedCustomerId);
                     foreach (var message in messages)
                     {
                         var isSender = message.SenderId.ToString() == userId;
-                        <div style="margin: 10px 0; padding: 10px; border-radius: 5px; max-width: 70%; @(isSender ? "background-color: #007bff; color: white; margin-left: auto;" : "background-color: #ccc;")">
-                            <strong>@(message.Sender?.UserName ?? "Unknown")</strong> (@message.SentAt.ToString("g"))<br />
+                        <div class="message @(isSender ? "sent" : "received")">
+                            <strong>@(message.Sender?.UserName ?? "Unknown")</strong>
+                            <small>(@message.SentAt.ToString("g"))</small><br />
                             @message.Content
                         </div>
                     }
                 }
                 else
                 {
-                    <p>Select a customer to view messages.</p>
+                    <p class="no-selection">Select a customer to view messages.</p>
                 }
             </div>
-            <div style="padding: 10px; border-top: 1px solid #ccc;">
-                <input type="text" id="messageInput" style="width: 70%;" placeholder="Type a message..." />
-                <button id="sendButton" style="width: 25%;">Send</button>
+            <div class="message-input">
+                <input type="text" id="messageInput" placeholder="Type a message..." />
+                <button id="sendButton"><i class="bi bi-send-fill"></i> Send</button>
             </div>
         </div>
     </div>
@@ -76,7 +75,7 @@
 
 <script>
     let currentUserId = "@userId";
-    let selectedCustomerId = "@selectedCustomerId"; // Customer được chọn mặc định
+    let selectedCustomerId = "@selectedCustomerId";
 
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/chatHub")
@@ -85,26 +84,13 @@
     connection.start().then(() => console.log("Connected")).catch(err => console.error(err));
 
     connection.on("ReceiveMessage", (message) => {
-        // Chỉ hiển thị tin nhắn nếu nó liên quan đến Customer được chọn
         if (message.senderId === selectedCustomerId || message.receiverId === selectedCustomerId) {
             const messageContainer = document.getElementById("messageContainer");
             const isSender = message.senderId === currentUserId;
             const messageDiv = document.createElement("div");
-            messageDiv.style.margin = "10px 0";
-            messageDiv.style.padding = "10px";
-            messageDiv.style.borderRadius = "5px";
-            messageDiv.style.maxWidth = "70%";
-
-            if (isSender) {
-                messageDiv.style.backgroundColor = "#007bff";
-                messageDiv.style.color = "white";
-                messageDiv.style.marginLeft = "auto";
-            } else {
-                messageDiv.style.backgroundColor = "#ccc";
-            }
-
+            messageDiv.className = `message ${isSender ? "sent" : "received"}`;
             messageDiv.innerHTML = `
-                <strong>${message.senderName}</strong> (${message.sentAt})<br/>
+                <strong>${message.senderName}</strong> <small>(${message.sentAt})</small><br/>
                 ${message.content}
             `;
             messageContainer.appendChild(messageDiv);
@@ -118,7 +104,6 @@
 
     connection.on("SupportRequested", (customerName) => {
         alert(`New support request from ${customerName}`);
-        // Tải lại trang để cập nhật danh sách Customer
         window.location.reload();
     });
 
@@ -138,13 +123,9 @@
 
     function selectCustomer(customerId) {
         selectedCustomerId = customerId;
-        // Cập nhật giao diện: làm nổi bật Customer được chọn
-        document.querySelectorAll("li").forEach(li => {
-            li.style.backgroundColor = "";
-        });
-        event.currentTarget.style.backgroundColor = "#e0e0e0";
+        document.querySelectorAll(".customer-items li").forEach(li => li.classList.remove("selected"));
+        event.currentTarget.classList.add("selected");
 
-        // Tải lại tin nhắn của Customer được chọn
         fetch(`/AdminChat/GetMessages?customerId=${customerId}`)
             .then(response => response.json())
             .then(messages => {
@@ -153,21 +134,9 @@
                 messages.forEach(message => {
                     const isSender = message.senderId === currentUserId;
                     const messageDiv = document.createElement("div");
-                    messageDiv.style.margin = "10px 0";
-                    messageDiv.style.padding = "10px";
-                    messageDiv.style.borderRadius = "5px";
-                    messageDiv.style.maxWidth = "70%";
-
-                    if (isSender) {
-                        messageDiv.style.backgroundColor = "#007bff";
-                        messageDiv.style.color = "white";
-                        messageDiv.style.marginLeft = "auto";
-                    } else {
-                        messageDiv.style.backgroundColor = "#ccc";
-                    }
-
+                    messageDiv.className = `message ${isSender ? "sent" : "received"}`;
                     messageDiv.innerHTML = `
-                        <strong>${message.senderName}</strong> (${message.sentAt})<br/>
+                        <strong>${message.senderName}</strong> <small>(${message.sentAt})</small><br/>
                         ${message.content}
                     `;
                     messageContainer.appendChild(messageDiv);
@@ -177,3 +146,173 @@
             .catch(err => console.error(err));
     }
 </script>
+
+<style>
+    .admin-margin {
+        padding: 20px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .chat-container {
+        display: flex;
+        height: 500px;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    /* Customer List */
+    .customer-list {
+        width: 30%;
+        border-right: 1px solid #e0e0e0;
+        overflow-y: auto;
+        padding: 15px;
+        background-color: #f9f9f9;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 500;
+        color: #007bff;
+        margin-bottom: 15px;
+    }
+
+    .customer-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .customer-items li {
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+            .customer-items li:hover {
+                background-color: #e0e0e0;
+            }
+
+            .customer-items li.selected {
+                background-color: #007bff;
+                color: white;
+            }
+
+            .customer-items li strong {
+                font-size: 16px;
+            }
+
+            .customer-items li small {
+                font-size: 12px;
+                opacity: 0.8;
+            }
+
+    .no-data {
+        color: #666;
+        font-style: italic;
+    }
+
+    /* Message Panel */
+    .message-panel {
+        width: 70%;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .message-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        background-color: #f1f3f5;
+        border-radius: 10px;
+    }
+
+    .message {
+        margin: 10px 0;
+        padding: 12px 15px;
+        border-radius: 10px;
+        max-width: 70%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        word-wrap: break-word;
+    }
+
+        .message.sent {
+            background-color: #007bff;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.received {
+            background-color: #e9ecef;
+            color: #333;
+        }
+
+        .message strong {
+            font-size: 14px;
+        }
+
+        .message small {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+    .no-selection {
+        color: #666;
+        font-style: italic;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .message-input {
+        padding: 10px 0;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+    }
+
+        .message-input input {
+            width: 70%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+            margin-right: 10px;
+            transition: border-color 0.3s ease;
+        }
+
+            .message-input input:focus {
+                border-color: #007bff;
+            }
+
+        .message-input button {
+            width: 25%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .message-input button:hover {
+                background-color: #0056b3;
+            }
+
+            .message-input button i {
+                margin-right: 5px;
+            }
+</style>
